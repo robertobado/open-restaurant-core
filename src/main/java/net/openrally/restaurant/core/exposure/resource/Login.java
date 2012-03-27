@@ -18,29 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.jersey.spi.resource.Singleton;
-
 @Path("/login")
 @Component
 @Transactional
-@Singleton
 @Produces("application/json")
 @Consumes("application/json")
 public class Login extends BaseResource{
 	
 	@Autowired
-	public ConfigurationDAO configurationDAO;
+	private ConfigurationDAO configurationDAO;
 	
 	@Autowired
-	public UserDAO userDAO;
-		
-	public void setUserDAO(UserDAO userDAO) {
-		this.userDAO = userDAO;
-	}
-
-	public void setConfigurationDAO(ConfigurationDAO configurationDAO) {
-		this.configurationDAO = configurationDAO;
-	}
+	private UserDAO userDAO;
 
 	@POST
 	public Response post(String requestBody){

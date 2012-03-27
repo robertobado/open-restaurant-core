@@ -44,19 +44,6 @@ public class LoginTest extends BaseResourceTest {
 	
 	private String randomPassword;
 
-	
-	public void setUserDAO(UserDAO userDAO) {
-		this.userDAO = userDAO;
-	}
-
-	public void setCompanyDAO(CompanyDAO companyDAO) {
-		this.companyDAO = companyDAO;
-	}
-
-	public void setConfigurationDAO(ConfigurationDAO configurationDAO) {
-		this.configurationDAO = configurationDAO;
-	}
-
 	public LoginTest() throws Exception {
 		super("net.openrally.restaurant.core.exposure.resource");
 	}
