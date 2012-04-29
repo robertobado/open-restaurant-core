@@ -2,6 +2,8 @@ package net.openrally.restaurant.core.exposure.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -16,12 +18,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import net.openrally.restaurant.core.exception.BadRequestException;
+import net.openrally.restaurant.core.exception.ConflictException;
 import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.request.body.RoleRequestBody;
+import net.openrally.restaurant.core.response.body.RoleListResponseBody;
 import net.openrally.restaurant.core.response.body.RoleResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -57,14 +61,9 @@ public class RoleResource extends BaseResource {
 					+ requestBody);
 		}
 
-		logger.debug("Retrieving request user from login token");
 		User user = getRequestUser(loginToken);
 
 		RoleRequestBody roleRequestBody = retrieveRoleRequestBody(requestBody);
-
-		logger.debug("Validating request");
-
-		roleRequestBody.validate();
 
 		logger.debug("Creating new role");
 
@@ -95,6 +94,35 @@ public class RoleResource extends BaseResource {
 	}
 
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional(readOnly = true)
+	public Response getList(@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Starting to process a role GET request");
+		}
+
+		User user = getRequestUser(loginToken);
+		
+		List<Role> roleList = roleDAO.getAllByCompanyId(user.getCompany().getCompanyId());
+		
+		List<RoleResponseBody> responseRoleList = new LinkedList<RoleResponseBody>();
+		
+		for(Role role : roleList){
+			RoleResponseBody roleResponseBody = new RoleResponseBody(role);
+			responseRoleList.add(roleResponseBody);
+		}	
+
+		RoleListResponseBody roleListResponseBody = new RoleListResponseBody();
+		roleListResponseBody.setList(responseRoleList);
+
+		return Response.ok(gson.toJson(roleListResponseBody)).build();
+
+	}
+	
+	@GET
 	@Path("/{roleId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -107,22 +135,16 @@ public class RoleResource extends BaseResource {
 			logger.debug("Starting to process a role GET request");
 		}
 
-		logger.debug("Retrieving role from id parameter");
-		Role role = retrieveRole(roleIdString);
-
-		logger.debug("Retrieving request user from login token");
 		User user = getRequestUser(loginToken);
+
+		Role role = retrieveRole(roleIdString);
 
 		if (role.getCompany().getCompanyId() != user.getCompany()
 				.getCompanyId()) {
 			throw new ForbiddenException();
 		}
 
-		RoleResponseBody roleResponseBody = new RoleResponseBody();
-
-		roleResponseBody.setRoleId(role.getRoleId());
-		roleResponseBody.setName(role.getName());
-		roleResponseBody.setDescription(role.getDescription());
+		RoleResponseBody roleResponseBody = new RoleResponseBody(role);
 
 		return Response.ok(gson.toJson(roleResponseBody)).build();
 
@@ -132,26 +154,29 @@ public class RoleResource extends BaseResource {
 	@Path("/{roleId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional(rollbackFor = ConflictException.class)
 	public Response delete(@PathParam("roleId") String roleIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException {
+			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role DELETE request");
 		}
 
-		logger.debug("Retrieving role from id parameter");
 		Role role = retrieveRole(roleIdString);
 
-		logger.debug("Retrieving request user from login token");
 		User user = getRequestUser(loginToken);
-
 
 		if (role.getCompany().getCompanyId() != user.getCompany()
 				.getCompanyId()) {
 			throw new ForbiddenException();
 		}
 		
-		roleDAO.delete(role);
+		try {
+			roleDAO.delete(role);
+			roleDAO.flush();
+		} catch (ConstraintViolationException e) {
+			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+		}
 		
 		return Response.noContent().build();
 
@@ -161,20 +186,19 @@ public class RoleResource extends BaseResource {
 	@Path("/{roleId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional(rollbackFor = BadRequestException.class)
 	public Response put(String requestBody,
 			@PathParam("roleId") String roleIdString,
 			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException {
+			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role PUT request: "
 					+ requestBody);
 		}
 
-		logger.debug("Retrieving role from id parameter");
 		Role role = retrieveRole(roleIdString);
 
-		logger.debug("Retrieving request user from login token");
 		User user = getRequestUser(loginToken);
 
 		if (role.getCompany().getCompanyId() != user.getCompany()
@@ -189,14 +213,22 @@ public class RoleResource extends BaseResource {
 		
 		roleDAO.update(role);
 
-		return Response.ok().build();
+		URI roleLocationURI = new URI(BaseResource.getServerBasePath()
+				+ BaseResource.SLASH + PATH + BaseResource.SLASH
+				+ role.getRoleId());
+
+		logger.debug("Finished processing request successfully");
+
+		return Response.ok().contentLocation(roleLocationURI).build();
 
 	}
 	
 	private Role retrieveRole(String roleIdString) throws BadRequestException, NotFoundException{
 		long roleId;
 
+		logger.debug("Retrieving role from id parameter");
 		logger.debug("Converting role id from string to long");
+		
 		try {
 			roleId = Long.parseLong(roleIdString);
 		} catch (NumberFormatException e) {

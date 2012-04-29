@@ -8,6 +8,8 @@ import net.openrally.restaurant.core.persistence.dao.LoginTokenDAO;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.User;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +23,15 @@ import com.sun.jersey.spi.resource.Singleton;
 @Produces("application/json")
 @Consumes("application/json")
 public abstract class BaseResource {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	// Messages
 	protected static final String MSG_INVALID_JSON_AS_REQUEST_BODY = "Invalid JSON as request body";
 	protected static final String MSG_REQUEST_BODY_MISSING_OR_BLANK = "Request body missing or blank";
 	protected static final String MSG_DUPLICATE_ENTITY = "Duplicate entity";
 	protected static final String MSG_INVALID_ENTITY_IDENTIFIER = "Invalid entity identifier";
+	protected static final String MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES = "Entity is associated with other entities";
 
 	// Header parameters
 	public static final String LOGIN_TOKEN_HEADER_PARAMETER_NAME = "login-token";
@@ -46,6 +51,8 @@ public abstract class BaseResource {
 	protected LoginTokenDAO loginTokenDAO;
 
 	protected User getRequestUser(String loginTokenString) {
+		
+		logger.debug("Retrieving request user from login token");
 		
 		LoginToken loginToken = loginTokenDAO.loadByToken(loginTokenString);
 		

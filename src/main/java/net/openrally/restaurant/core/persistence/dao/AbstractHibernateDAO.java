@@ -51,7 +51,7 @@ public abstract class AbstractHibernateDAO<T extends Serializable, KeyType exten
 	public List<T> getList() {
 		Session session = sessionFactory.getCurrentSession();
 		Query queryResult = session.createQuery("from "
-				+ domainClass.getName());
+				+ domainClass.getSimpleName());
 	    return queryResult.list();
 	}
 
@@ -87,6 +87,11 @@ public abstract class AbstractHibernateDAO<T extends Serializable, KeyType exten
 //		Integer count = (Integer) list.get(0);
 //		return count.intValue();
 		throw new RuntimeException("Unimplemented method deleteAll on AbstractHibernateDAO");
+	}
+	
+	public void flush(){
+		Session session = sessionFactory.getCurrentSession();
+		session.flush();
 	}
 
 }

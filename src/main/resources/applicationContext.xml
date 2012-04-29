@@ -22,6 +22,6 @@
 	<context:component-scan base-package="net.openrally.restaurant.core" />
 
 	<import resource="db-config.xml" />
-
+	
 
 </beans>

@@ -1,6 +1,7 @@
 package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -10,9 +11,11 @@ import net.openrally.restaurant.core.exposure.resource.RoleResource;
 import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
+import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.request.body.RoleRequestBody;
+import net.openrally.restaurant.core.response.body.RoleListResponseBody;
 import net.openrally.restaurant.core.response.body.RoleResponseBody;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
@@ -332,6 +335,48 @@ public class RoleResourceTest extends BaseResourceTest {
 		companyDAO.delete(company);
 
 	}
+	
+	@Test
+	public void getFullRoleList() throws ClientProtocolException, IOException{
+		
+		Role role2 = new Role();
+		role2.setName(role.getName() + "-2");
+		role2.setDescription(role.getDescription() + "-2");
+		role2.setCompany(company);
+		roleDAO.save(role2);
+		
+		Role role3 = new Role();
+		role3.setName(role.getName() + "-3");
+		role3.setDescription(role.getDescription() + "-3");
+		role3.setCompany(company);
+		roleDAO.save(role3);
+		
+		HttpGet httpGet = generateBasicHttpGet(RoleResource.PATH
+				+ BaseResource.SLASH );
+
+		HttpResponse response = getHttpClient().execute(httpGet);
+
+		Assert.assertEquals(Status.OK.getStatusCode(), response.getStatusLine()
+				.getStatusCode());
+
+		String responseBody = StringUtilities.httpResponseAsString(response);
+
+		RoleListResponseBody roleResponseBody = gson.fromJson(responseBody,
+				RoleListResponseBody.class);
+		
+		RoleResponseBody roleResponseBody1 = new RoleResponseBody(role);
+		RoleResponseBody roleResponseBody2 = new RoleResponseBody(role2);
+		RoleResponseBody roleResponseBody3 = new RoleResponseBody(role3);
+		
+		List<RoleResponseBody> list = roleResponseBody.getList();
+
+		Assert.assertTrue(list.contains(roleResponseBody1));
+		Assert.assertTrue(list.contains(roleResponseBody2));
+		Assert.assertTrue(list.contains(roleResponseBody3));
+		
+		roleDAO.delete(role2);
+		roleDAO.delete(role3);
+	}
 
 	@Test
 	public void testPutInvalidRole() throws ClientProtocolException,
@@ -530,6 +575,30 @@ public class RoleResourceTest extends BaseResourceTest {
 		userDAO.delete(user);
 		configurationDAO.delete(configuration);
 		companyDAO.delete(company);
+	}
+	
+	@Test
+	public void testDeleteRoleUsedByFK() throws ClientProtocolException, IOException{
+		Permission permission = new Permission();
+		
+		permission.setRole(role);
+		permission.setPath("/example-path");
+		permission.setAllowPost(true);
+		permission.setAllowPut(true);
+		permission.setAllowGet(true);
+		permission.setAllowDelete(true);
+		
+		permissionDAO.save(permission);
+		
+		HttpDelete httpDelete = generateBasicHttpDelete(RoleResource.PATH
+				+ BaseResource.SLASH + role.getRoleId());
+
+		HttpResponse response = getHttpClient().execute(httpDelete);
+
+		Assert.assertEquals(Status.CONFLICT.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+		
+		permissionDAO.delete(permission);
 	}
 
 	// Utilitary functions

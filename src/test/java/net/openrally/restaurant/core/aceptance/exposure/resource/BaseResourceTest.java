@@ -11,6 +11,7 @@ import net.openrally.restaurant.core.exposure.resource.BaseResource;
 import net.openrally.restaurant.core.persistence.dao.CompanyDAO;
 import net.openrally.restaurant.core.persistence.dao.ConfigurationDAO;
 import net.openrally.restaurant.core.persistence.dao.LoginTokenDAO;
+import net.openrally.restaurant.core.persistence.dao.PermissionDAO;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.dao.UserDAO;
 import net.openrally.restaurant.core.persistence.entity.Company;
@@ -61,6 +62,9 @@ public class BaseResourceTest {
 	
 	@Autowired
 	protected RoleDAO roleDAO;
+	
+	@Autowired
+	protected PermissionDAO permissionDAO;
 	
 	protected String authorizedToken;
 

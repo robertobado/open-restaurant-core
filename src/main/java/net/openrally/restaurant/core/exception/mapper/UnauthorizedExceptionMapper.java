@@ -20,18 +20,19 @@ ExceptionMapper<UnauthorizedException>{
 
 	@Override
 	public Response toResponse(UnauthorizedException exception) {
-	logger.debug("UnauthorizedExceptionMapper captured an exception: " + exception);
+		logger.debug("UnauthorizedExceptionMapper captured an exception: "
+				+ exception);
 
-	Error error = new Error();
-	error.setStatus(HttpStatus.UNAUTHORIZED.value());
-	error.setMessage(exception.getMessage().isEmpty() ? "Unauthorized"
-			: exception.getMessage());
+		Error error = new Error();
+		error.setStatus(HttpStatus.UNAUTHORIZED.value());
+		error.setMessage(exception.getMessage().isEmpty() ? "Unauthorized"
+				: exception.getMessage());
 
-	ResponseBuilder responseBuilder = Response
-			.status(Response.Status.UNAUTHORIZED);
-	responseBuilder.type(MediaType.APPLICATION_JSON);
-	responseBuilder.entity(gson.toJson(error));
+		ResponseBuilder responseBuilder = Response
+				.status(Response.Status.UNAUTHORIZED);
+		responseBuilder.type(MediaType.APPLICATION_JSON);
+		responseBuilder.entity(gson.toJson(error));
 
-	return responseBuilder.build();
+		return responseBuilder.build();
 	}
 }

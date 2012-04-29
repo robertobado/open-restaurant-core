@@ -1,13 +1,17 @@
 package net.openrally.restaurant.core.persistence.entity;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -36,6 +40,13 @@ public class User implements Serializable {
 	
 	@Column(nullable=false)
 	private String passwordHash;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "UserRole", joinColumns = { 
+			@JoinColumn(name = "userId", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "roleId", 
+					nullable = false, updatable = false) })
+	private Set<Role> roles;
 
 	public long getUserId() {
 		return userId;
@@ -73,5 +84,13 @@ public class User implements Serializable {
 		String passwordWithSalt = salt + SLASH
 				+ password;
 		return HashCalculator.generateMD5Hash(passwordWithSalt);
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 }
