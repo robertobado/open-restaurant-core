@@ -192,7 +192,7 @@ public class RoleResource extends BaseResource {
 	public Response put(String requestBody,
 			@PathParam("roleId") String roleIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException, ConflictException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role PUT request: "
@@ -213,7 +213,12 @@ public class RoleResource extends BaseResource {
 		role.setName(roleRequestBody.getName());
 		role.setDescription(roleRequestBody.getDescription());
 		
-		roleDAO.update(role);
+		try {
+			roleDAO.update(role);
+			roleDAO.flush();
+		} catch (ConstraintViolationException e) {
+			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
+		}
 
 		URI roleLocationURI = new URI(BaseResource.getServerBasePath()
 				+ BaseResource.SLASH + PATH + BaseResource.SLASH

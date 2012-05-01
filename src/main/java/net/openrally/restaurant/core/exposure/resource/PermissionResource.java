@@ -252,8 +252,9 @@ public class PermissionResource extends BaseResource {
 		
 		try {
 			permissionDAO.save(permission);
+			permissionDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
+			throw new BadRequestException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI roleLocationURI = new URI(BaseResource.getServerBasePath()

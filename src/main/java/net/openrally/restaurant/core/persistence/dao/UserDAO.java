@@ -48,4 +48,13 @@ public class UserDAO extends AbstractHibernateDAO<User, Long>{
 			throw new InternalServerErrorException();
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<User> getAllByCompanyId(long companyId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("from "
+				+ domainClass.getSimpleName() + " where companyId = :companyId ");
+		query.setParameter("companyId", companyId);
+	    return query.list();
+	}
 }

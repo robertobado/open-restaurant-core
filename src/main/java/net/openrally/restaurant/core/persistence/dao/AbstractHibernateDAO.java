@@ -46,6 +46,11 @@ public abstract class AbstractHibernateDAO<T extends Serializable, KeyType exten
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(t);
 	}
+	
+	public void refresh(T t){
+		Session session = sessionFactory.getCurrentSession();
+		session.refresh(t);
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<T> getList() {

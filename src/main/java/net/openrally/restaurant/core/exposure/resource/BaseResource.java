@@ -32,6 +32,7 @@ public abstract class BaseResource {
 	protected static final String MSG_DUPLICATE_ENTITY = "Duplicate entity";
 	protected static final String MSG_INVALID_ENTITY_IDENTIFIER = "Invalid entity identifier";
 	protected static final String MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES = "Entity is associated with other entities";
+	protected static final String MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE = "Entity is associated with other entities or duplicate";
 
 	// Header parameters
 	//public static final String LOGIN_TOKEN_HEADER_PARAMETER_NAME = "login-token";
