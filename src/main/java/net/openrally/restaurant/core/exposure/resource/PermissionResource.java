@@ -22,6 +22,7 @@ import net.openrally.restaurant.core.exception.BadRequestException;
 import net.openrally.restaurant.core.exception.ConflictException;
 import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
+import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.PermissionDAO;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.entity.Permission;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonSyntaxException;
+import com.sun.jersey.spi.container.ContainerRequest;
 
 @Path("/permission")
 @Component
@@ -60,8 +62,8 @@ public class PermissionResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response post(String requestBody,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, ForbiddenException, URISyntaxException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, ForbiddenException, URISyntaxException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
@@ -120,7 +122,7 @@ public class PermissionResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
 	public Response getList(@QueryParam("roleId") String roleIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 		
@@ -153,8 +155,8 @@ public class PermissionResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
 	public Response get(@PathParam("permissionId") String permissionIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
@@ -178,7 +180,7 @@ public class PermissionResource extends BaseResource {
 	@Transactional(rollbackFor = ConflictException.class)
 	public Response delete(
 			@PathParam("permissionId") String permissionIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 		
@@ -206,8 +208,8 @@ public class PermissionResource extends BaseResource {
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response put(String requestBody,
 			@PathParam("permissionId") String permissionIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 

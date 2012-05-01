@@ -17,7 +17,6 @@ import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.request.body.PermissionRequestBody;
 import net.openrally.restaurant.core.response.body.PermissionListResponseBody;
 import net.openrally.restaurant.core.response.body.PermissionResponseBody;
-import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +44,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	private User user;
 	private LoginToken loginToken;
 	private Role role;
+	private Permission testPermission;
 	private Permission permission;
 	
 	public PermissionResourceTest() throws Exception {
@@ -55,44 +55,25 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void setupEntities() {
 		company = createCompanyAndPersist();
 		configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
-
-		role = new Role();
-		role.setCompany(company);
-		role.setDescription(RandomGenerator.generateString(50));
-		role.setName(RandomGenerator.generateString(10));
-		roleDAO.save(role);
-		
-		permission = new Permission();
-		permission.setRole(role);
-		permission.setPath("/xpto");
-		permission.setAllowPost(true);
-		permission.setAllowPut(false);
-		permission.setAllowGet(true);
-		permission.setAllowDelete(false);
-		
-		permissionDAO.save(permission);
-
+		user = createUserAndPersist(configuration);
+		loginToken = createLoginTokenAndPersist(user);
+		authorizedToken = loginToken.getToken();
+		role = createRoleAndPersist(company);
+		associateRoleWithUser(role, user);
+		testPermission = createRandomPermissionAndPersist(role);
+		permission = createFullPermissionAndPersist(role);
 	}
 	
 	@After
 	public void tearDownEntities() {
 		
-		if(null != permission){
-			permissionDAO.delete(permission);
+		if(null != testPermission){
+			permissionDAO.delete(testPermission);
 		}
+		permissionDAO.delete(permission);
+		
+		user.setRoles(null);
+		userDAO.update(user);
 		
 		roleDAO.delete(role);
 		loginTokenDAO.delete(loginToken);
@@ -153,14 +134,14 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testInvalidJsonPut() throws ClientProtocolException,
 			IOException {
 		testInvalidJsonPut(PermissionResource.PATH + BaseResource.SLASH
-				+ permission.getPermissionId());
+				+ testPermission.getPermissionId());
 	}
 
 	@Test
 	public void testEmptyRequestBodyPut() throws ClientProtocolException,
 			IOException {
 		testEmptyRequestBodyPut(PermissionResource.PATH + BaseResource.SLASH
-				+ permission.getPermissionId());
+				+ testPermission.getPermissionId());
 	}
 
 	@Test
@@ -295,11 +276,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testPostPermissionOnOtherCompanysRole() throws ClientProtocolException, IOException{
 		Company company = createCompanyAndPersist();
 
-		Role role = new Role();
-		role.setCompany(company);
-		role.setDescription(RandomGenerator.generateString(50));
-		role.setName(RandomGenerator.generateString(10));
-		roleDAO.save(role);
+		Role role = createRoleAndPersist(company);
 		
 		HttpPost httpPost = generateBasicHttpPost(PermissionResource.PATH);
 
@@ -339,7 +316,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId() + 99);
+				+ BaseResource.SLASH + testPermission.getPermissionId() + 99);
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -351,7 +328,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testGetCorrectPermission() throws ClientProtocolException,
 			IOException {
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -363,13 +340,13 @@ public class PermissionResourceTest extends BaseResourceTest {
 		PermissionResponseBody permissionResponseBody = gson.fromJson(responseBody,
 				PermissionResponseBody.class);
 
-		Assert.assertEquals(permissionResponseBody.getPermissionId(), permission.getPermissionId());
-		Assert.assertEquals(permissionResponseBody.getRoleId(), permission.getRole().getRoleId());
-		Assert.assertTrue(StringUtils.equals(permissionResponseBody.getPath(), permission.getPath()));
-		Assert.assertEquals(permissionResponseBody.isAllowPost(), permission.isAllowPost());
-		Assert.assertEquals(permissionResponseBody.isAllowPut(), permission.isAllowPut());
-		Assert.assertEquals(permissionResponseBody.isAllowGet(), permission.isAllowGet());
-		Assert.assertEquals(permissionResponseBody.isAllowDelete(), permission.isAllowDelete());
+		Assert.assertEquals(permissionResponseBody.getPermissionId(), testPermission.getPermissionId());
+		Assert.assertEquals(permissionResponseBody.getRoleId(), testPermission.getRole().getRoleId());
+		Assert.assertTrue(StringUtils.equals(permissionResponseBody.getPath(), testPermission.getPath()));
+		Assert.assertEquals(permissionResponseBody.isAllowPost(), testPermission.isAllowPost());
+		Assert.assertEquals(permissionResponseBody.isAllowPut(), testPermission.isAllowPut());
+		Assert.assertEquals(permissionResponseBody.isAllowGet(), testPermission.isAllowGet());
+		Assert.assertEquals(permissionResponseBody.isAllowDelete(), testPermission.isAllowDelete());
 	}
 
 	@Test
@@ -378,22 +355,13 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -432,24 +400,9 @@ public class PermissionResourceTest extends BaseResourceTest {
 	@Test
 	public void testGetListCorrectly() throws ClientProtocolException, IOException{
 		
-		Permission permission2 = new Permission();
-		permission2.setAllowPost(true);
-		permission2.setAllowPut(true);
-		permission2.setAllowGet(true);
-		permission2.setAllowDelete(true);
-		permission2.setRole(role);
-		permission2.setPath(permission.getPath() + "-2");
-		permissionDAO.save(permission2);
+		Permission permission2 = createRandomPermissionAndPersist(role);
 		
-		Permission permission3 = new Permission();
-		permission3.setAllowPost(false);
-		permission3.setAllowPut(false);
-		permission3.setAllowGet(false);
-		permission3.setAllowDelete(false);
-		permission3.setRole(role);
-		permission3.setPath(permission.getPath() + "-3");
-		permissionDAO.save(permission3);
-		
+		Permission permission3 = createRandomPermissionAndPersist(role);		
 		
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
 				+ "?roleId=" + role.getRoleId());
@@ -464,7 +417,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 		PermissionListResponseBody permissionResponseBody = gson.fromJson(responseBody,
 				PermissionListResponseBody.class);
 		
-		PermissionResponseBody permissionResponseBody1 = new PermissionResponseBody(permission);
+		PermissionResponseBody permissionResponseBody1 = new PermissionResponseBody(testPermission);
 		PermissionResponseBody permissionResponseBody2 = new PermissionResponseBody(permission2);
 		PermissionResponseBody permissionResponseBody3 = new PermissionResponseBody(permission3);
 		
@@ -484,19 +437,10 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
 				+ "?roleId=" + role.getRoleId());
@@ -529,7 +473,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testPutUnexistingRole() throws ClientProtocolException,
 			IOException {
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
-				+ BaseResource.SLASH + (permission.getPermissionId() + 99));
+				+ BaseResource.SLASH + (testPermission.getPermissionId() + 99));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -542,7 +486,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 			IOException {
 
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		PermissionRequestBody permissionRequestBody = generateBasicPermissionRequestBody();
 
@@ -562,7 +506,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	@Test
 	public void testPuttWithPathNotStartedWithSlash() throws ClientProtocolException, IOException{
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		PermissionRequestBody permissionRequestBody = generateBasicPermissionRequestBody();
 
@@ -585,7 +529,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 		// Alter entity
 
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		PermissionRequestBody permissionRequestBody = generateBasicPermissionRequestBody();
 
@@ -604,7 +548,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 		// Retrieve entity for comparison
 
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		response = getHttpClient().execute(httpGet);
 
@@ -616,7 +560,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 		PermissionResponseBody permissionResponseBody = gson.fromJson(responseBody,
 				PermissionResponseBody.class);
 
-		Assert.assertEquals(permissionResponseBody.getPermissionId(), permission.getPermissionId());
+		Assert.assertEquals(permissionResponseBody.getPermissionId(), testPermission.getPermissionId());
 		Assert.assertTrue(StringUtils.equals(permissionResponseBody.getPath(), permissionRequestBody.getPath()));
 		Assert.assertEquals(permissionResponseBody.getRoleId(), permissionRequestBody.getRoleId());
 		Assert.assertEquals(permissionResponseBody.isAllowPost(), permissionRequestBody.isAllowPost());
@@ -628,24 +572,16 @@ public class PermissionResourceTest extends BaseResourceTest {
 	@Test
 	public void testPutOtherCompanysPermission() throws ClientProtocolException,
 			IOException {
+		
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 		
 		PermissionRequestBody permissionRequestBody = generateBasicPermissionRequestBody();
 
@@ -680,7 +616,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testDeleteUnexistingRole() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(PermissionResource.PATH
-				+ BaseResource.SLASH + (permission.getPermissionId() + 99));
+				+ BaseResource.SLASH + (testPermission.getPermissionId() + 99));
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
@@ -692,37 +628,29 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testDeleteCorrectRole() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
 		Assert.assertEquals(Status.NO_CONTENT.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 		
-		permission = null;
+		testPermission = null;
 	}
 
 	@Test
 	public void testDeleteOtherCompanysRole() throws ClientProtocolException,
 			IOException {
+		
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpDelete httpDelete = generateBasicHttpDelete(PermissionResource.PATH
-				+ BaseResource.SLASH + permission.getPermissionId());
+				+ BaseResource.SLASH + testPermission.getPermissionId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 

@@ -21,6 +21,7 @@ import net.openrally.restaurant.core.exception.BadRequestException;
 import net.openrally.restaurant.core.exception.ConflictException;
 import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
+import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonSyntaxException;
+import com.sun.jersey.spi.container.ContainerRequest;
 
 @Path("/role")
 @Component
@@ -53,8 +55,8 @@ public class RoleResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response post(String requestBody,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, URISyntaxException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, URISyntaxException, UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role POST request: "
@@ -97,8 +99,8 @@ public class RoleResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
-	public Response getList(@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException {
+	public Response getList(@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role GET request");
@@ -128,8 +130,8 @@ public class RoleResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
 	public Response get(@PathParam("roleId") String roleIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role GET request");
@@ -156,7 +158,7 @@ public class RoleResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = ConflictException.class)
 	public Response delete(@PathParam("roleId") String roleIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException, UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role DELETE request");
@@ -189,8 +191,8 @@ public class RoleResource extends BaseResource {
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response put(String requestBody,
 			@PathParam("roleId") String roleIdString,
-			@HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role PUT request: "

@@ -41,4 +41,8 @@ public class RandomGenerator {
 	public static long randomPositiveLong(){
 		return Math.abs(random.nextLong());
 	}
+	
+	public static boolean randomBoolean(){
+		return random.nextBoolean();
+	}
 }

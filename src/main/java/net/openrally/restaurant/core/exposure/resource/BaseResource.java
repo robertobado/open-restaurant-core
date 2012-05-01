@@ -34,7 +34,7 @@ public abstract class BaseResource {
 	protected static final String MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES = "Entity is associated with other entities";
 
 	// Header parameters
-	public static final String LOGIN_TOKEN_HEADER_PARAMETER_NAME = "login-token";
+	//public static final String LOGIN_TOKEN_HEADER_PARAMETER_NAME = "login-token";
 	public static final String LOCATION_HEADER_PARAMETER_NAME = "Location";
 	
 	public static final String HTTP = "http";
@@ -50,7 +50,7 @@ public abstract class BaseResource {
 	@Autowired
 	protected LoginTokenDAO loginTokenDAO;
 
-	protected User getRequestUser(String loginTokenString) {
+	protected User getRequestUser(String loginTokenString) throws UnauthorizedException {
 		
 		logger.debug("Retrieving request user from login token");
 		

@@ -17,7 +17,6 @@ import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.request.body.RoleRequestBody;
 import net.openrally.restaurant.core.response.body.RoleListResponseBody;
 import net.openrally.restaurant.core.response.body.RoleResponseBody;
-import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +44,8 @@ public class RoleResourceTest extends BaseResourceTest {
 	private User user;
 	private LoginToken loginToken;
 	private Role role;
+	private Role testRole;
+	private Permission permission;
 
 	public RoleResourceTest() throws Exception {
 		super();
@@ -54,33 +55,28 @@ public class RoleResourceTest extends BaseResourceTest {
 	public void setupEntities() {
 		company = createCompanyAndPersist();
 		configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
-
-		role = new Role();
-		role.setCompany(company);
-		role.setDescription(RandomGenerator.generateString(50));
-		role.setName(RandomGenerator.generateString(10));
-		roleDAO.save(role);
-
+		user = createUserAndPersist(configuration);
+		loginToken = createLoginTokenAndPersist(user);
+		authorizedToken = loginToken.getToken();
+		role = createRoleAndPersist(company);
+		associateRoleWithUser(role, user);
+		permission = createFullPermissionAndPersist(role);
+		
+		testRole = createRoleAndPersist(company);
 	}
 
 	@After
 	public void tearDownEntities() {
 		
-		if(null != role){
-			roleDAO.delete(role);
+		permissionDAO.delete(permission);
+		
+		user.setRoles(null);
+		userDAO.update(user);
+		
+		roleDAO.delete(role);
+		
+		if(null != testRole){
+			roleDAO.delete(testRole);
 		}
 		
 		loginTokenDAO.delete(loginToken);
@@ -141,14 +137,14 @@ public class RoleResourceTest extends BaseResourceTest {
 	public void testInvalidJsonPut() throws ClientProtocolException,
 			IOException {
 		testInvalidJsonPut(RoleResource.PATH + BaseResource.SLASH
-				+ role.getRoleId());
+				+ testRole.getRoleId());
 	}
 
 	@Test
 	public void testEmptyRequestBodyPut() throws ClientProtocolException,
 			IOException {
 		testEmptyRequestBodyPut(RoleResource.PATH + BaseResource.SLASH
-				+ role.getRoleId());
+				+ testRole.getRoleId());
 	}
 
 	@Test
@@ -271,7 +267,7 @@ public class RoleResourceTest extends BaseResourceTest {
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId() + 99);
+				+ BaseResource.SLASH + testRole.getRoleId() + 99);
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -283,7 +279,7 @@ public class RoleResourceTest extends BaseResourceTest {
 	public void testGetCorrectRole() throws ClientProtocolException,
 			IOException {
 		HttpGet httpGet = generateBasicHttpGet(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -295,10 +291,10 @@ public class RoleResourceTest extends BaseResourceTest {
 		RoleResponseBody roleResponseBody = gson.fromJson(responseBody,
 				RoleResponseBody.class);
 
-		Assert.assertEquals(roleResponseBody.getRoleId(), role.getRoleId());
-		Assert.assertEquals(roleResponseBody.getName(), role.getName());
+		Assert.assertEquals(roleResponseBody.getRoleId(), testRole.getRoleId());
+		Assert.assertEquals(roleResponseBody.getName(), testRole.getName());
 		Assert.assertEquals(roleResponseBody.getDescription(),
-				role.getDescription());
+				testRole.getDescription());
 	}
 
 	@Test
@@ -307,22 +303,13 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpGet httpGet = generateBasicHttpGet(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -339,17 +326,8 @@ public class RoleResourceTest extends BaseResourceTest {
 	@Test
 	public void getFullRoleList() throws ClientProtocolException, IOException{
 		
-		Role role2 = new Role();
-		role2.setName(role.getName() + "-2");
-		role2.setDescription(role.getDescription() + "-2");
-		role2.setCompany(company);
-		roleDAO.save(role2);
-		
-		Role role3 = new Role();
-		role3.setName(role.getName() + "-3");
-		role3.setDescription(role.getDescription() + "-3");
-		role3.setCompany(company);
-		roleDAO.save(role3);
+		Role role2 = createRoleAndPersist(company);
+		Role role3 = createRoleAndPersist(company);
 		
 		HttpGet httpGet = generateBasicHttpGet(RoleResource.PATH
 				+ BaseResource.SLASH );
@@ -364,7 +342,7 @@ public class RoleResourceTest extends BaseResourceTest {
 		RoleListResponseBody roleResponseBody = gson.fromJson(responseBody,
 				RoleListResponseBody.class);
 		
-		RoleResponseBody roleResponseBody1 = new RoleResponseBody(role);
+		RoleResponseBody roleResponseBody1 = new RoleResponseBody(testRole);
 		RoleResponseBody roleResponseBody2 = new RoleResponseBody(role2);
 		RoleResponseBody roleResponseBody3 = new RoleResponseBody(role3);
 		
@@ -394,7 +372,7 @@ public class RoleResourceTest extends BaseResourceTest {
 	public void testPutUnexistingRole() throws ClientProtocolException,
 			IOException {
 		HttpPut httpPut = generateBasicHttpPut(RoleResource.PATH
-				+ BaseResource.SLASH + (role.getRoleId() + 99));
+				+ BaseResource.SLASH + (testRole.getRoleId() + 99));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -407,7 +385,7 @@ public class RoleResourceTest extends BaseResourceTest {
 			IOException {
 
 		HttpPut httpPut = generateBasicHttpPut(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		RoleRequestBody roleRequestBody = generateBasicRoleRequestBody();
 
@@ -430,7 +408,7 @@ public class RoleResourceTest extends BaseResourceTest {
 		// Alter entity
 
 		HttpPut httpPut = generateBasicHttpPut(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		RoleRequestBody roleRequestBody = generateBasicRoleRequestBody();
 
@@ -449,7 +427,7 @@ public class RoleResourceTest extends BaseResourceTest {
 		// Retrieve entity for comparison
 
 		HttpGet httpGet = generateBasicHttpGet(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		response = getHttpClient().execute(httpGet);
 
@@ -461,7 +439,7 @@ public class RoleResourceTest extends BaseResourceTest {
 		RoleResponseBody roleResponseBody = gson.fromJson(responseBody,
 				RoleResponseBody.class);
 
-		Assert.assertEquals(roleResponseBody.getRoleId(), role.getRoleId());
+		Assert.assertEquals(roleResponseBody.getRoleId(), testRole.getRoleId());
 		Assert.assertEquals(roleResponseBody.getName(), "example-role-name");
 		Assert.assertEquals(roleResponseBody.getDescription(),
 				"Example Role Name");
@@ -470,24 +448,16 @@ public class RoleResourceTest extends BaseResourceTest {
 	@Test
 	public void testPutOtherCompanysRole() throws ClientProtocolException,
 			IOException {
+		
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpPut httpPut = generateBasicHttpPut(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 		
 		RoleRequestBody roleRequestBody = generateBasicRoleRequestBody();
 
@@ -522,7 +492,7 @@ public class RoleResourceTest extends BaseResourceTest {
 	public void testDeleteUnexistingRole() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(RoleResource.PATH
-				+ BaseResource.SLASH + (role.getRoleId() + 99));
+				+ BaseResource.SLASH + (testRole.getRoleId() + 99));
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
@@ -534,37 +504,29 @@ public class RoleResourceTest extends BaseResourceTest {
 	public void testDeleteCorrectRole() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
 		Assert.assertEquals(Status.NO_CONTENT.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 		
-		role = null;
+		testRole = null;
 	}
 
 	@Test
 	public void testDeleteOtherCompanysRole() throws ClientProtocolException,
 			IOException {
+		
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
-
-		String randomPassword = RandomGenerator.generateString();
-		User user = createUserAndPersist(configuration, randomPassword);
-
-		authorizedToken = RandomGenerator.generateString(10);
-
-		LoginToken loginToken = new LoginToken();
-		loginToken
-				.setExpirationTime((System.currentTimeMillis() / 1000) + 1000);
-		loginToken.setToken(authorizedToken);
-		loginToken.setUser(user);
-
-		loginTokenDAO.save(loginToken);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
 
 		HttpDelete httpDelete = generateBasicHttpDelete(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
@@ -579,19 +541,11 @@ public class RoleResourceTest extends BaseResourceTest {
 	
 	@Test
 	public void testDeleteRoleUsedByFK() throws ClientProtocolException, IOException{
-		Permission permission = new Permission();
 		
-		permission.setRole(role);
-		permission.setPath("/example-path");
-		permission.setAllowPost(true);
-		permission.setAllowPut(true);
-		permission.setAllowGet(true);
-		permission.setAllowDelete(true);
-		
-		permissionDAO.save(permission);
+		Permission permission = createRandomPermissionAndPersist(testRole);
 		
 		HttpDelete httpDelete = generateBasicHttpDelete(RoleResource.PATH
-				+ BaseResource.SLASH + role.getRoleId());
+				+ BaseResource.SLASH + testRole.getRoleId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 

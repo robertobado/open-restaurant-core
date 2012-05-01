@@ -171,7 +171,7 @@ public class LoginResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testNonexistingCompany() throws ClientProtocolException,
+	public void testNonExistingCompany() throws ClientProtocolException,
 			IOException {
 		setupEntities();
 

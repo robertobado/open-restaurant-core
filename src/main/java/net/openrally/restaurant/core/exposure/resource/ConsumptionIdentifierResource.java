@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.JsonSyntaxException;
+import com.sun.jersey.spi.container.ContainerRequest;
 
 @Path("/consumption-identifier")
 @Component
@@ -30,7 +31,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response post(String requestBody, @HeaderParam(LOGIN_TOKEN_HEADER_PARAMETER_NAME) String loginToken) throws BadRequestException {
+	public Response post(String requestBody, @HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException {
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a post consumption-identifier request" + requestBody);

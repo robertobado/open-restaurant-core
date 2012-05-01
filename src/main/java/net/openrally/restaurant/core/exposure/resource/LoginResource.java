@@ -28,8 +28,6 @@ import com.google.gson.JsonSyntaxException;
 @Path("/login")
 @Component
 @Transactional
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class LoginResource extends BaseResource {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
