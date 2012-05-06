@@ -24,7 +24,7 @@ public class UserDAO extends AbstractHibernateDAO<User, Long>{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public User loadByCompanyIdAndLogin(long companyId, String login) {
+	public User loadByCompanyIdAndLogin(Long companyId, String login) {
 		
 		if(logger.isDebugEnabled()){
 			logger.debug(String.format("Querying users for companyId = [%d] and login [%s]", companyId, login));
@@ -50,7 +50,7 @@ public class UserDAO extends AbstractHibernateDAO<User, Long>{
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<User> getAllByCompanyId(long companyId) {
+	public List<User> getAllByCompanyId(Long companyId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("from "
 				+ domainClass.getSimpleName() + " where companyId = :companyId ");

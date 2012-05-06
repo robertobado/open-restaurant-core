@@ -11,7 +11,7 @@ import net.openrally.restaurant.core.persistence.entity.User;
 
 public class UserResponseBody {
 
-	private long userId;
+	private Long userId;
 	private String login;
 	private List<Long> roles;
 
@@ -29,11 +29,11 @@ public class UserResponseBody {
 		}
 	}
 
-	public long getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 

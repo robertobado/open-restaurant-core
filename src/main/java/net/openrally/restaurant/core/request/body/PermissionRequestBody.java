@@ -6,8 +6,9 @@ import net.openrally.restaurant.core.annotation.ParameterValuePositive;
 
 public class PermissionRequestBody extends BaseRequestBody{
 	
+	@ParameterRequired
 	@ParameterValuePositive
-	private long roleId;
+	private Long roleId;
 	
 	@ParameterRequired
 	private String path;
@@ -20,11 +21,11 @@ public class PermissionRequestBody extends BaseRequestBody{
 	
 	private boolean allowDelete;
 	
-	public long getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(long roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 

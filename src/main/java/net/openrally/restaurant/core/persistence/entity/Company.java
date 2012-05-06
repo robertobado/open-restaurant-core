@@ -17,13 +17,13 @@ public class Company implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private long companyId;
+	private Long companyId;
 
-	public long getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
 
-	public void setCompanyId(long companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 	

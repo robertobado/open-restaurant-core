@@ -6,7 +6,7 @@ import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
 
 public class ConsumptionIdentifierResponseBody {
 	
-	private long consumptionIdentifierId; 
+	private Long consumptionIdentifierId; 
 	private String identifier;
 	private String description;
 	
@@ -15,10 +15,10 @@ public class ConsumptionIdentifierResponseBody {
 		this.identifier = consumptionIdentifier.getIdentifier();
 		this.description = consumptionIdentifier.getDescription();
 	}
-	public long getConsumptionIdentifierId() {
+	public Long getConsumptionIdentifierId() {
 		return consumptionIdentifierId;
 	}
-	public void setConsumptionIdentifierId(long consumptionIdentifierId) {
+	public void setConsumptionIdentifierId(Long consumptionIdentifierId) {
 		this.consumptionIdentifierId = consumptionIdentifierId;
 	}
 	public String getIdentifier() {

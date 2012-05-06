@@ -19,7 +19,7 @@ public class ConsumptionIdentifierDAO extends AbstractHibernateDAO<ConsumptionId
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ConsumptionIdentifier> getAllByCompanyId(long companyId) {
+	public List<ConsumptionIdentifier> getAllByCompanyId(Long companyId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("from "
 				+ domainClass.getSimpleName() + " where companyId = :companyId ");

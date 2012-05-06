@@ -19,7 +19,7 @@ public class PermissionDAO extends AbstractHibernateDAO<Permission, Long> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Permission> listByRoleId(long roleId) {
+	public List<Permission> listByRoleId(Long roleId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("from "
 				+ domainClass.getSimpleName() + " where roleId = :roleId ");

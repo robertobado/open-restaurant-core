@@ -6,7 +6,7 @@ import net.openrally.restaurant.core.persistence.entity.Role;
 
 public class RoleResponseBody {
 	
-	private long roleId;
+	private Long roleId;
 	private String name;
 	private String description;
 	
@@ -20,11 +20,11 @@ public class RoleResponseBody {
 		this.description = role.getDescription();
 	}
 
-	public long getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(long roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 

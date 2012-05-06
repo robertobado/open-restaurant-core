@@ -29,7 +29,7 @@ public class User implements Serializable {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private long userId;
+	private Long userId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId", referencedColumnName = "companyId", nullable=false)
@@ -48,11 +48,11 @@ public class User implements Serializable {
 					nullable = false, updatable = false) })
 	private Set<Role> roles;
 
-	public long getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	

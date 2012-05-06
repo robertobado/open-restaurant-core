@@ -20,7 +20,7 @@ public class Product implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private long productId;
+	private Long productId;
 	
 	@ManyToOne(optional=false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId", referencedColumnName = "companyId", nullable=false)
@@ -32,11 +32,11 @@ public class Product implements Serializable{
 	@Column
 	private String description;
 
-	public long getProductId() {
+	public Long getProductId() {
 		return productId;
 	}
 
-	public void setProductId(long productId) {
+	public void setProductId(Long productId) {
 		this.productId = productId;
 	}
 

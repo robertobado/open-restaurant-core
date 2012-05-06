@@ -21,7 +21,7 @@ public class ConsumptionIdentifier implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private long consumptionIdentifierId;
+	private Long consumptionIdentifierId;
 	
 	@ManyToOne(optional=false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId", referencedColumnName = "companyId", nullable=false)
@@ -33,11 +33,11 @@ public class ConsumptionIdentifier implements Serializable{
 	@Column
 	private String description;
 
-	public long getConsumptionIdentifierId() {
+	public Long getConsumptionIdentifierId() {
 		return consumptionIdentifierId;
 	}
 
-	public void setConsumptionIdentifierId(long consumptionIdentifierId) {
+	public void setConsumptionIdentifierId(Long consumptionIdentifierId) {
 		this.consumptionIdentifierId = consumptionIdentifierId;
 	}
 

@@ -123,21 +123,22 @@ public class UserResource extends BaseResource {
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
 			throws BadRequestException, NotFoundException, ForbiddenException,
 			UnauthorizedException {
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a user GET request");
 		}
 
 		User user = getRequestUser(loginToken);
-		
-		List<User> userList = userDAO.getAllByCompanyId(user.getCompany().getCompanyId());
-		
+
+		List<User> userList = userDAO.getAllByCompanyId(user.getCompany()
+				.getCompanyId());
+
 		List<UserResponseBody> responseUserList = new LinkedList<UserResponseBody>();
-		
-		for(User listUser : userList){
+
+		for (User listUser : userList) {
 			UserResponseBody userResponseBody = new UserResponseBody(listUser);
 			responseUserList.add(userResponseBody);
-		}	
+		}
 
 		UserListResponseBody roleListResponseBody = new UserListResponseBody();
 		roleListResponseBody.setList(responseUserList);
@@ -163,8 +164,8 @@ public class UserResource extends BaseResource {
 
 		User queryUser = retrieveUser(userIdString);
 
-		if (queryUser.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(queryUser.getCompany().getCompanyId(), user
+				.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -190,18 +191,19 @@ public class UserResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (deleteUser.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(deleteUser.getCompany().getCompanyId(), user
+				.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
+
 		try {
 			userDAO.delete(deleteUser);
 			userDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
 		}
-		
+
 		return Response.noContent().build();
 	}
 
@@ -224,27 +226,29 @@ public class UserResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (putUser.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(putUser.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
 		UserRequestBody userRequestBody = retrieveUserRequestBody(requestBody);
-		
+
 		Configuration configuration = configurationDAO.loadByCompanyId(user
 				.getCompany().getCompanyId());
 
 		String hashSalt = configuration.getHashSalt();
-		
+
 		putUser.setLogin(userRequestBody.getLogin());
-		putUser.setPasswordHash(User.generatePasswordHash(userRequestBody.getPassword(), hashSalt));
+		putUser.setPasswordHash(User.generatePasswordHash(
+				userRequestBody.getPassword(), hashSalt));
 		addUserRoles(putUser, userRequestBody);
-		
+
 		try {
 			userDAO.update(putUser);
 			userDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI roleLocationURI = new URI(BaseResource.getServerBasePath()
@@ -275,30 +279,32 @@ public class UserResource extends BaseResource {
 
 		return userRequestBody;
 	}
-	
-	private User retrieveUser(String userIdString) throws BadRequestException, NotFoundException{
-		long userId;
+
+	private User retrieveUser(String userIdString) throws BadRequestException,
+			NotFoundException {
+		Long userId;
 
 		logger.debug("Retrieving user from id parameter");
-		logger.debug("Converting user id from string to long");
-		
+		logger.debug("Converting user id from string to Long");
+
 		try {
 			userId = Long.parseLong(userIdString);
 		} catch (NumberFormatException e) {
 			logger.debug("Malformed user id: " + userIdString);
 			throw new BadRequestException(MSG_INVALID_ENTITY_IDENTIFIER);
 		}
-		
+
 		User user = userDAO.get(userId);
 
 		if (null == user) {
 			throw new NotFoundException();
 		}
-		
+
 		return user;
 	}
-	
-	private void addUserRoles(User user, UserRequestBody userRequestBody) throws NotFoundException{
+
+	private void addUserRoles(User user, UserRequestBody userRequestBody)
+			throws NotFoundException {
 		Set<Role> roles = new HashSet<Role>();
 
 		List<Long> roleIdList = userRequestBody.getRoles();
@@ -312,8 +318,8 @@ public class UserResource extends BaseResource {
 					throw new NotFoundException("Role not found");
 				}
 
-				if (role.getCompany().getCompanyId() != user.getCompany()
-						.getCompanyId()) {
+				if (Long.compare(role.getCompany().getCompanyId(), user
+						.getCompany().getCompanyId()) != 0) {
 					throw new ForbiddenException();
 				}
 

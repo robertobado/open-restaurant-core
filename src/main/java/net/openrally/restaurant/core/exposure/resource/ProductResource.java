@@ -48,7 +48,7 @@ public class ProductResource extends BaseResource {
 
 	@Autowired
 	private ProductDAO productDAO;
-	
+
 	public static final String PATH = "product";
 
 	@POST
@@ -57,7 +57,8 @@ public class ProductResource extends BaseResource {
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response post(String requestBody,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, ForbiddenException, URISyntaxException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
@@ -94,21 +95,26 @@ public class ProductResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
-	public Response getList(@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+	public Response getList(
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
-		
-		List<Product> entityList = productDAO.getAllByCompanyId(user.getCompany().getCompanyId());
-		
+
+		List<Product> entityList = productDAO.getAllByCompanyId(user
+				.getCompany().getCompanyId());
+
 		List<ProductResponseBody> entityResponseBodyList = new LinkedList<ProductResponseBody>();
-		
-		for(Product entity : entityList){
-			ProductResponseBody entityResponseBody = new ProductResponseBody(entity);
+
+		for (Product entity : entityList) {
+			ProductResponseBody entityResponseBody = new ProductResponseBody(
+					entity);
 			entityResponseBodyList.add(entityResponseBody);
 		}
-		
+
 		ProductListResponseBody entityListResponseBody = new ProductListResponseBody();
-		
+
 		entityListResponseBody.setList(entityResponseBodyList);
 
 		return Response.ok(gson.toJson(entityListResponseBody)).build();
@@ -121,14 +127,15 @@ public class ProductResource extends BaseResource {
 	@Transactional(readOnly = true)
 	public Response get(@PathParam("entityId") String entityIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
 		Product product = retrieveProduct(entityIdString);
 
-		if (product.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(product.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -143,24 +150,26 @@ public class ProductResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = ConflictException.class)
-	public Response delete(
-			@PathParam("entityId") String entityIdString,
-			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException, UnauthorizedException {
+	public Response delete(@PathParam("entityId") String entityIdString,
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			ConflictException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
-		
+
 		Product product = retrieveProduct(entityIdString);
 
-		if (product.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(product.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
+
 		try {
 			productDAO.delete(product);
 			productDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
 		}
 
 		return Response.noContent().build();
@@ -174,14 +183,15 @@ public class ProductResource extends BaseResource {
 	public Response put(String requestBody,
 			@PathParam("entityId") String entityIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			URISyntaxException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
 		Product product = retrieveProduct(entityIdString);
 
-		if (product.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(product.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -189,12 +199,13 @@ public class ProductResource extends BaseResource {
 
 		product.setName(productRequestBody.getName());
 		product.setDescription(productRequestBody.getDescription());
-		
+
 		try {
-			productDAO.save(product);
+			productDAO.update(product);
 			productDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new BadRequestException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
+			throw new BadRequestException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI locationURI = new URI(BaseResource.getServerBasePath()
@@ -208,10 +219,10 @@ public class ProductResource extends BaseResource {
 
 	private Product retrieveProduct(String productIdString)
 			throws BadRequestException, NotFoundException {
-		long productId;
+		Long productId;
 
 		logger.debug("Retrieving product from id parameter");
-		logger.debug("Converting product id from string to long");
+		logger.debug("Converting product id from string to Long");
 
 		try {
 			productId = Long.parseLong(productIdString);
@@ -248,5 +259,5 @@ public class ProductResource extends BaseResource {
 
 		return productRequestBody;
 	}
-	
+
 }

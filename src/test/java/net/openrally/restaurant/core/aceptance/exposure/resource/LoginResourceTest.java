@@ -116,7 +116,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		HttpPost httpPost = generateBasicHttpPost(LoginResource.PATH);
 
 		LoginRequestBody loginRequestBody = generateBasicLoginRequestBody();
-		loginRequestBody.setCompanyId(0L);
+		loginRequestBody.setCompanyId(null);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
 		httpPost.setEntity(new StringEntity(requestBody));

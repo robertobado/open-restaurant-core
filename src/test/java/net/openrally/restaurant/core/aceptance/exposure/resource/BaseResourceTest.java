@@ -11,7 +11,9 @@ import javax.ws.rs.core.Response.Status;
 
 import junit.framework.Assert;
 import net.openrally.restaurant.core.exposure.resource.BaseResource;
+import net.openrally.restaurant.core.exposure.resource.BillResource;
 import net.openrally.restaurant.core.persistence.dao.AbstractHibernateDAO;
+import net.openrally.restaurant.core.persistence.dao.BillDAO;
 import net.openrally.restaurant.core.persistence.dao.CompanyDAO;
 import net.openrally.restaurant.core.persistence.dao.ConfigurationDAO;
 import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
@@ -20,6 +22,7 @@ import net.openrally.restaurant.core.persistence.dao.PermissionDAO;
 import net.openrally.restaurant.core.persistence.dao.ProductDAO;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.dao.UserDAO;
+import net.openrally.restaurant.core.persistence.entity.Bill;
 import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
@@ -83,6 +86,9 @@ public class BaseResourceTest {
 	
 	@Autowired
 	protected ProductDAO productDAO;
+	
+	@Autowired
+	protected BillDAO billDAO;
 
 	protected String authorizedToken;
 
@@ -440,7 +446,7 @@ public class BaseResourceTest {
 	protected void deleteEntityBasedOnLocation(String locationUri, AbstractHibernateDAO entityDAO) {
 		String entityIdString = locationUri.substring(locationUri.lastIndexOf("/")+1);
 
-		long entityId = Long.parseLong(entityIdString);
+		Long entityId = Long.parseLong(entityIdString);
 
 		Serializable entity = entityDAO.get(entityId);
 		entityDAO.delete(entity);
@@ -568,5 +574,12 @@ public class BaseResourceTest {
 		return product;
 	}
 	
-	
+	protected Bill createOpenBillAndPersist(ConsumptionIdentifier consumptionIdentifier){
+		Bill bill = new Bill();
+		bill.setStatus(BillResource.Status.OPEN.toString());
+		bill.setOpenTimestamp(System.currentTimeMillis()/1000);
+		bill.setConsumptionIdentifier(consumptionIdentifier);
+		billDAO.save(bill);
+		return bill;
+	}	
 }

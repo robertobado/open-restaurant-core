@@ -21,7 +21,7 @@ public class Role implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private long roleId;
+	private Long roleId;
 
 	@ManyToOne(optional=false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId", referencedColumnName = "companyId", nullable=false)
@@ -33,11 +33,11 @@ public class Role implements Serializable{
 	@Column(nullable=false)
 	private String description;
 
-	public long getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(long roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 	

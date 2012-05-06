@@ -56,7 +56,8 @@ public class RoleResource extends BaseResource {
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response post(String requestBody,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, URISyntaxException,
+			UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role POST request: "
@@ -99,23 +100,26 @@ public class RoleResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
-	public Response getList(@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+	public Response getList(
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role GET request");
 		}
 
 		User user = getRequestUser(loginToken);
-		
-		List<Role> roleList = roleDAO.getAllByCompanyId(user.getCompany().getCompanyId());
-		
+
+		List<Role> roleList = roleDAO.getAllByCompanyId(user.getCompany()
+				.getCompanyId());
+
 		List<RoleResponseBody> responseRoleList = new LinkedList<RoleResponseBody>();
-		
-		for(Role role : roleList){
+
+		for (Role role : roleList) {
 			RoleResponseBody roleResponseBody = new RoleResponseBody(role);
 			responseRoleList.add(roleResponseBody);
-		}	
+		}
 
 		RoleListResponseBody roleListResponseBody = new RoleListResponseBody();
 		roleListResponseBody.setList(responseRoleList);
@@ -123,7 +127,7 @@ public class RoleResource extends BaseResource {
 		return Response.ok(gson.toJson(roleListResponseBody)).build();
 
 	}
-	
+
 	@GET
 	@Path("/{roleId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -131,7 +135,8 @@ public class RoleResource extends BaseResource {
 	@Transactional(readOnly = true)
 	public Response get(@PathParam("roleId") String roleIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role GET request");
@@ -141,8 +146,8 @@ public class RoleResource extends BaseResource {
 
 		Role role = retrieveRole(roleIdString);
 
-		if (role.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -158,7 +163,9 @@ public class RoleResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = ConflictException.class)
 	public Response delete(@PathParam("roleId") String roleIdString,
-			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException, UnauthorizedException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			ConflictException, UnauthorizedException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role DELETE request");
@@ -168,18 +175,19 @@ public class RoleResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (role.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
+
 		try {
 			roleDAO.delete(role);
 			roleDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
 		}
-		
+
 		return Response.noContent().build();
 
 	}
@@ -192,7 +200,8 @@ public class RoleResource extends BaseResource {
 	public Response put(String requestBody,
 			@PathParam("roleId") String roleIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException, ConflictException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			URISyntaxException, UnauthorizedException, ConflictException {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting to process a role PUT request: "
@@ -203,21 +212,22 @@ public class RoleResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (role.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
 		RoleRequestBody roleRequestBody = retrieveRoleRequestBody(requestBody);
-		
+
 		role.setName(roleRequestBody.getName());
 		role.setDescription(roleRequestBody.getDescription());
-		
+
 		try {
 			roleDAO.update(role);
 			roleDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI roleLocationURI = new URI(BaseResource.getServerBasePath()
@@ -229,34 +239,37 @@ public class RoleResource extends BaseResource {
 		return Response.ok().contentLocation(roleLocationURI).build();
 
 	}
-	
-	private Role retrieveRole(String roleIdString) throws BadRequestException, NotFoundException{
-		long roleId;
+
+	private Role retrieveRole(String roleIdString) throws BadRequestException,
+			NotFoundException {
+		Long roleId;
 
 		logger.debug("Retrieving role from id parameter");
-		logger.debug("Converting role id from string to long");
-		
+		logger.debug("Converting role id from string to Long");
+
 		try {
 			roleId = Long.parseLong(roleIdString);
 		} catch (NumberFormatException e) {
 			logger.debug("Malformed role id: " + roleIdString);
 			throw new BadRequestException(MSG_INVALID_ENTITY_IDENTIFIER);
 		}
-		
+
 		Role role = roleDAO.get(roleId);
 
 		if (null == role) {
 			throw new NotFoundException();
 		}
-		
+
 		return role;
 	}
-	
-	private RoleRequestBody retrieveRoleRequestBody(String requestBodyString) throws BadRequestException{
+
+	private RoleRequestBody retrieveRoleRequestBody(String requestBodyString)
+			throws BadRequestException {
 		RoleRequestBody roleRequestBody;
 
 		try {
-			roleRequestBody = gson.fromJson(requestBodyString, RoleRequestBody.class);
+			roleRequestBody = gson.fromJson(requestBodyString,
+					RoleRequestBody.class);
 		} catch (JsonSyntaxException e) {
 			throw new BadRequestException(MSG_INVALID_JSON_AS_REQUEST_BODY);
 		}
@@ -266,7 +279,7 @@ public class RoleResource extends BaseResource {
 		}
 
 		roleRequestBody.validate();
-		
+
 		return roleRequestBody;
 	}
 

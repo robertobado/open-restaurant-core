@@ -43,21 +43,22 @@ import com.sun.jersey.spi.container.ContainerRequest;
 @Component
 @Transactional
 public class ConsumptionIdentifierResource extends BaseResource {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private ConsumptionIdentifierDAO consumptionIdentifierDAO;
-	
+
 	public static final String PATH = "consumption-identifier";
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response post(String requestBody,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, ForbiddenException, URISyntaxException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
@@ -68,8 +69,10 @@ public class ConsumptionIdentifierResource extends BaseResource {
 		ConsumptionIdentifier consumptionIdentifier = new ConsumptionIdentifier();
 
 		consumptionIdentifier.setCompany(user.getCompany());
-		consumptionIdentifier.setDescription(consumptionIdentifierRequestBody.getDescription());
-		consumptionIdentifier.setIdentifier(consumptionIdentifierRequestBody.getIdentifier());
+		consumptionIdentifier.setDescription(consumptionIdentifierRequestBody
+				.getDescription());
+		consumptionIdentifier.setIdentifier(consumptionIdentifierRequestBody
+				.getIdentifier());
 
 		logger.debug("Saving new consumption identifier");
 
@@ -94,21 +97,26 @@ public class ConsumptionIdentifierResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
-	public Response getList(@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+	public Response getList(
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
-		
-		List<ConsumptionIdentifier> entityList = consumptionIdentifierDAO.getAllByCompanyId(user.getCompany().getCompanyId());
-		
+
+		List<ConsumptionIdentifier> entityList = consumptionIdentifierDAO
+				.getAllByCompanyId(user.getCompany().getCompanyId());
+
 		List<ConsumptionIdentifierResponseBody> entityResponseBodyList = new LinkedList<ConsumptionIdentifierResponseBody>();
-		
-		for(ConsumptionIdentifier entity : entityList){
-			ConsumptionIdentifierResponseBody entityResponseBody = new ConsumptionIdentifierResponseBody(entity);
+
+		for (ConsumptionIdentifier entity : entityList) {
+			ConsumptionIdentifierResponseBody entityResponseBody = new ConsumptionIdentifierResponseBody(
+					entity);
 			entityResponseBodyList.add(entityResponseBody);
 		}
-		
+
 		ConsumptionIdentifierListResponseBody entityListResponseBody = new ConsumptionIdentifierListResponseBody();
-		
+
 		entityListResponseBody.setList(entityResponseBodyList);
 
 		return Response.ok(gson.toJson(entityListResponseBody)).build();
@@ -121,21 +129,23 @@ public class ConsumptionIdentifierResource extends BaseResource {
 	@Transactional(readOnly = true)
 	public Response get(@PathParam("entityId") String entityIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
 		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
 
-		if (consumptionIdentifier.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
+				user.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
 		ConsumptionIdentifierResponseBody consumptionIdentifierResponseBody = new ConsumptionIdentifierResponseBody(
 				consumptionIdentifier);
 
-		return Response.ok(gson.toJson(consumptionIdentifierResponseBody)).build();
+		return Response.ok(gson.toJson(consumptionIdentifierResponseBody))
+				.build();
 	}
 
 	@DELETE
@@ -143,24 +153,26 @@ public class ConsumptionIdentifierResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = ConflictException.class)
-	public Response delete(
-			@PathParam("entityId") String entityIdString,
-			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException, UnauthorizedException {
+	public Response delete(@PathParam("entityId") String entityIdString,
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			ConflictException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
-		
+
 		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
 
-		if (consumptionIdentifier.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
+				user.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
+
 		try {
 			consumptionIdentifierDAO.delete(consumptionIdentifier);
 			consumptionIdentifierDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
 		}
 
 		return Response.noContent().build();
@@ -174,27 +186,31 @@ public class ConsumptionIdentifierResource extends BaseResource {
 	public Response put(String requestBody,
 			@PathParam("entityId") String entityIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			URISyntaxException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
 		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
 
-		if (consumptionIdentifier.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
+				user.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
 		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = retrieveConsumptionIdentifierRequestBody(requestBody);
 
-		consumptionIdentifier.setIdentifier(consumptionIdentifierRequestBody.getIdentifier());
-		consumptionIdentifier.setDescription(consumptionIdentifierRequestBody.getDescription());
-		
+		consumptionIdentifier.setIdentifier(consumptionIdentifierRequestBody
+				.getIdentifier());
+		consumptionIdentifier.setDescription(consumptionIdentifierRequestBody
+				.getDescription());
+
 		try {
-			consumptionIdentifierDAO.save(consumptionIdentifier);
+			consumptionIdentifierDAO.update(consumptionIdentifier);
 			consumptionIdentifierDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new BadRequestException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
+			throw new BadRequestException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI locationURI = new URI(BaseResource.getServerBasePath()
@@ -206,21 +222,25 @@ public class ConsumptionIdentifierResource extends BaseResource {
 		return Response.ok().contentLocation(locationURI).build();
 	}
 
-	private ConsumptionIdentifier retrieveConsumptionIdentifier(String consumptionIdentifierIdString)
-			throws BadRequestException, NotFoundException {
-		long consumptionIdentifierId;
+	private ConsumptionIdentifier retrieveConsumptionIdentifier(
+			String consumptionIdentifierIdString) throws BadRequestException,
+			NotFoundException {
+		Long consumptionIdentifierId;
 
 		logger.debug("Retrieving consumption identifier from id parameter");
-		logger.debug("Converting consumption identifier id from string to long");
+		logger.debug("Converting consumption identifier id from string to Long");
 
 		try {
-			consumptionIdentifierId = Long.parseLong(consumptionIdentifierIdString);
+			consumptionIdentifierId = Long
+					.parseLong(consumptionIdentifierIdString);
 		} catch (NumberFormatException e) {
-			logger.debug("Malformed consumption identifier id: " + consumptionIdentifierIdString);
+			logger.debug("Malformed consumption identifier id: "
+					+ consumptionIdentifierIdString);
 			throw new BadRequestException(MSG_INVALID_ENTITY_IDENTIFIER);
 		}
 
-		ConsumptionIdentifier consumptionIdentifier = consumptionIdentifierDAO.get(consumptionIdentifierId);
+		ConsumptionIdentifier consumptionIdentifier = consumptionIdentifierDAO
+				.get(consumptionIdentifierId);
 
 		if (null == consumptionIdentifier) {
 			throw new NotFoundException();

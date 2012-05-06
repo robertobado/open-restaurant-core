@@ -7,11 +7,11 @@ import net.openrally.restaurant.core.persistence.entity.Permission;
 
 public class PermissionResponseBody {
 	
-	private long permissionId;
+	private Long permissionId;
 	
 	private String path;
 	
-	private long roleId;
+	private Long roleId;
 	
 	private boolean allowPost;
 	
@@ -35,11 +35,11 @@ public class PermissionResponseBody {
 		this.allowDelete = permission.isAllowDelete();
 	}
 
-	public long getPermissionId() {
+	public Long getPermissionId() {
 		return permissionId;
 	}
 
-	public void setPermissionId(long permissionId) {
+	public void setPermissionId(Long permissionId) {
 		this.permissionId = permissionId;
 	}
 
@@ -51,11 +51,11 @@ public class PermissionResponseBody {
 		this.path = path;
 	}
 
-	public long getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(long roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 

@@ -13,7 +13,7 @@ public class LoginRequestBody extends BaseRequestBody{
 	
 	@ParameterRequired
 	@ParameterValuePositive
-	private long companyId;
+	private Long companyId;
 	
 	public String getLogin() {
 		return login;
@@ -27,10 +27,10 @@ public class LoginRequestBody extends BaseRequestBody{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public long getCompanyId() {
+	public Long getCompanyId() {
 		return companyId;
 	}
-	public void setCompanyId(long companyId) {
+	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
 

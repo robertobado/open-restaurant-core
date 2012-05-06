@@ -38,7 +38,7 @@ public class RandomGenerator {
 		return Math.abs(randomInt(length));
 	}
 	
-	public static long randomPositiveLong(){
+	public static Long randomPositiveLong(){
 		return Math.abs(random.nextLong());
 	}
 	

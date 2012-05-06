@@ -33,7 +33,7 @@ public class BaseRequestBody {
 							throw new BadRequestException("Parameter "
 									+ field.getName() + " missing or blank");
 						}
-					} else if (field.getType() == Long.class || field.getType() == long.class) {
+					} else if (field.getType() == Long.class || field.getType() == Long.class) {
 						Long fieldValue = (Long) field.get(this);
 
 						if (fieldValue == null) {
@@ -58,10 +58,10 @@ public class BaseRequestBody {
 				
 				if (null != field.getAnnotation(ParameterValuePositive.class)) {
 
-					if (field.getType() == Long.class || field.getType() == long.class) {
+					if (field.getType() == Long.class || field.getType() == Long.class) {
 						Long fieldValue = (Long) field.get(this);
 
-						if (fieldValue <= 0 ) {
+						if (null != fieldValue && fieldValue <= 0 ) {
 							throw new BadRequestException("Parameter "
 									+ field.getName() + " negative or zero");
 						}

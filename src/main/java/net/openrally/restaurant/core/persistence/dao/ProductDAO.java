@@ -20,7 +20,7 @@ public class ProductDAO extends AbstractHibernateDAO<Product, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Product> getAllByCompanyId(long companyId) {
+	public List<Product> getAllByCompanyId(Long companyId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("from "
 				+ domainClass.getSimpleName() + " where companyId = :companyId ");

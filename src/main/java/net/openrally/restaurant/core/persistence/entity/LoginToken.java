@@ -22,7 +22,7 @@ public class LoginToken implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
-	private long tokenId;
+	private Long tokenId;
 	
 	@Column(nullable = false)
 	private String token;
@@ -32,13 +32,13 @@ public class LoginToken implements Serializable{
 	private User user;
 	
 	@Column(nullable=false)
-	private long expirationTime;
+	private Long expirationTime;
 
-	public long getTokenId() {
+	public Long getTokenId() {
 		return tokenId;
 	}
 
-	public void setTokenId(long tokenId) {
+	public void setTokenId(Long tokenId) {
 		this.tokenId = tokenId;
 	}
 
@@ -58,11 +58,11 @@ public class LoginToken implements Serializable{
 		this.user = user;
 	}
 
-	public long getExpirationTime() {
+	public Long getExpirationTime() {
 		return expirationTime;
 	}
 
-	public void setExpirationTime(long expirationTime) {
+	public void setExpirationTime(Long expirationTime) {
 		this.expirationTime = expirationTime;
 	}
 	

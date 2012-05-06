@@ -65,7 +65,7 @@ public class LoginResource extends BaseResource {
 		
 		loginRequestBody.validate();
 
-		long companyId = loginRequestBody.getCompanyId();
+		Long companyId = loginRequestBody.getCompanyId();
 		String login = loginRequestBody.getLogin();
 
 		User user = userDAO.loadByCompanyIdAndLogin(companyId, login);
@@ -87,7 +87,7 @@ public class LoginResource extends BaseResource {
 
 		logger.debug("Login granted, generating token...");
 
-		long tokenLifeTime = configuration.getLoginTokenLifeTime();
+		Long tokenLifeTime = configuration.getLoginTokenLifeTime();
 
 		LoginToken loginToken = new LoginToken();
 		loginToken.setUser(user);

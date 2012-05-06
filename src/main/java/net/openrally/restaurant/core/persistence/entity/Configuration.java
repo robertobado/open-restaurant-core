@@ -20,7 +20,7 @@ public class Configuration implements Serializable {
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
-	private long configurationId;
+	private Long configurationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "companyId", referencedColumnName = "companyId", nullable = false)
@@ -30,21 +30,21 @@ public class Configuration implements Serializable {
 	private String hashSalt;
 	
 	@Column(nullable = false)
-	private long loginTokenLifeTime;
+	private Long loginTokenLifeTime;
 
-	public long getLoginTokenLifeTime() {
+	public Long getLoginTokenLifeTime() {
 		return loginTokenLifeTime;
 	}
 
-	public void setLoginTokenLifeTime(long loginTokenLifeTime) {
+	public void setLoginTokenLifeTime(Long loginTokenLifeTime) {
 		this.loginTokenLifeTime = loginTokenLifeTime;
 	}
 
-	public long getConfigurationId() {
+	public Long getConfigurationId() {
 		return configurationId;
 	}
 
-	public void setConfigurationId(long configurationId) {
+	public void setConfigurationId(Long configurationId) {
 		this.configurationId = configurationId;
 	}
 

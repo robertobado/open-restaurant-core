@@ -21,7 +21,7 @@ public class Permission implements Serializable{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	private long permissionId;
+	private Long permissionId;
 	
 	@ManyToOne(optional=false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "roleId", referencedColumnName = "roleId", nullable=false)
@@ -42,11 +42,11 @@ public class Permission implements Serializable{
 	@Column(nullable=false)
 	private boolean allowDelete;
 
-	public long getPermissionId() {
+	public Long getPermissionId() {
 		return permissionId;
 	}
 
-	public void setPermissionId(long permissionId) {
+	public void setPermissionId(Long permissionId) {
 		this.permissionId = permissionId;
 	}
 

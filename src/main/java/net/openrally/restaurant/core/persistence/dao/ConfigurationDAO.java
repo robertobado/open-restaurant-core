@@ -25,7 +25,7 @@ public class ConfigurationDAO extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public Configuration loadByCompanyId(long companyId) {
+	public Configuration loadByCompanyId(Long companyId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("from " + getDomainClass().getSimpleName()
 				+ " where companyId = :companyId ");

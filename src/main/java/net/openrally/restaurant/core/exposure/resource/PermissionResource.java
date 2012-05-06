@@ -62,7 +62,8 @@ public class PermissionResource extends BaseResource {
 	@Transactional(rollbackFor = BadRequestException.class)
 	public Response post(String requestBody,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, ForbiddenException, URISyntaxException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
@@ -74,8 +75,8 @@ public class PermissionResource extends BaseResource {
 
 		Role role = roleDAO.get(permissionRequestBody.getRoleId());
 
-		if (role.getCompany().getCompanyId() != user.getCompany()
-				.getCompanyId()) {
+		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -121,28 +122,32 @@ public class PermissionResource extends BaseResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(readOnly = true)
 	public Response getList(@QueryParam("roleId") String roleIdString,
-			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
-		
+
 		Role role = retrieveRole(roleIdString);
-		
-		if (role.getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+
+		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
+				.getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
-		List<Permission> permissionList = permissionDAO.listByRoleId(role.getRoleId());
-		
+
+		List<Permission> permissionList = permissionDAO.listByRoleId(role
+				.getRoleId());
+
 		List<PermissionResponseBody> permissionResponseList = new LinkedList<PermissionResponseBody>();
-		
-		for(Permission permission : permissionList){
-			PermissionResponseBody permissionResponseBody = new PermissionResponseBody(permission);
+
+		for (Permission permission : permissionList) {
+			PermissionResponseBody permissionResponseBody = new PermissionResponseBody(
+					permission);
 			permissionResponseList.add(permissionResponseBody);
 		}
-		
+
 		PermissionListResponseBody permissionListResponseBody = new PermissionListResponseBody();
-		
+
 		permissionListResponseBody.setList(permissionResponseList);
 
 		return Response.ok(gson.toJson(permissionListResponseBody)).build();
@@ -155,14 +160,15 @@ public class PermissionResource extends BaseResource {
 	@Transactional(readOnly = true)
 	public Response get(@PathParam("permissionId") String permissionIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
 		Permission permission = retrievePermission(permissionIdString);
 
-		if (permission.getRole().getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(permission.getRole().getCompany().getCompanyId(), user
+				.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -179,22 +185,25 @@ public class PermissionResource extends BaseResource {
 	@Transactional(rollbackFor = ConflictException.class)
 	public Response delete(
 			@PathParam("permissionId") String permissionIdString,
-			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken) throws BadRequestException, NotFoundException, ForbiddenException, ConflictException, UnauthorizedException {
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			ConflictException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
-		
+
 		Permission permission = retrievePermission(permissionIdString);
-		
-		if (permission.getRole().getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+
+		if (Long.compare(permission.getRole().getCompany().getCompanyId(), user
+				.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
+
 		try {
 			permissionDAO.delete(permission);
 			permissionDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
 		}
 
 		return Response.noContent().build();
@@ -208,14 +217,15 @@ public class PermissionResource extends BaseResource {
 	public Response put(String requestBody,
 			@PathParam("permissionId") String permissionIdString,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
-			throws BadRequestException, NotFoundException, ForbiddenException, URISyntaxException, UnauthorizedException {
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			URISyntaxException, UnauthorizedException {
 
 		User user = getRequestUser(loginToken);
 
 		Permission permission = retrievePermission(permissionIdString);
 
-		if (permission.getRole().getCompany().getCompanyId() != user
-				.getCompany().getCompanyId()) {
+		if (Long.compare(permission.getRole().getCompany().getCompanyId(), user
+				.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
 
@@ -248,12 +258,13 @@ public class PermissionResource extends BaseResource {
 		permission.setAllowPut(permissionRequestBody.isAllowPut());
 		permission.setAllowGet(permissionRequestBody.isAllowGet());
 		permission.setAllowDelete(permissionRequestBody.isAllowDelete());
-		
+
 		try {
-			permissionDAO.save(permission);
+			permissionDAO.update(permission);
 			permissionDAO.flush();
 		} catch (ConstraintViolationException e) {
-			throw new BadRequestException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
+			throw new BadRequestException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI locationURI = new URI(BaseResource.getServerBasePath()
@@ -267,10 +278,10 @@ public class PermissionResource extends BaseResource {
 
 	private Permission retrievePermission(String permissionIdString)
 			throws BadRequestException, NotFoundException {
-		long permissionId;
+		Long permissionId;
 
 		logger.debug("Retrieving permission from id parameter");
-		logger.debug("Converting permission id from string to long");
+		logger.debug("Converting permission id from string to Long");
 
 		try {
 			permissionId = Long.parseLong(permissionIdString);
@@ -287,13 +298,13 @@ public class PermissionResource extends BaseResource {
 
 		return permission;
 	}
-	
-	private Role retrieveRole(String roleIdString)
-			throws BadRequestException, NotFoundException {
-		long roleId;
+
+	private Role retrieveRole(String roleIdString) throws BadRequestException,
+			NotFoundException {
+		Long roleId;
 
 		logger.debug("Retrieving role from id parameter");
-		logger.debug("Converting role id from string to long");
+		logger.debug("Converting role id from string to Long");
 
 		try {
 			roleId = Long.parseLong(roleIdString);
