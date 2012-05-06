@@ -88,18 +88,6 @@ public class UserResourceTest extends BaseResourceTest{
 		companyDAO.delete(company);
 	}
 	
-	private void tearDownEntities(String userUri) {
-		String roleIdString = userUri.replace(BaseResource.getServerBasePath()
-				+ BaseResource.SLASH + UserResource.PATH + BaseResource.SLASH,
-				"");
-
-		long userId = Long.parseLong(roleIdString);
-
-		User user = userDAO.get(userId);
-		userDAO.delete(user);
-
-	}
-	
 	@Test
 	public void testWrongContentTypePost() throws ClientProtocolException,
 			IOException {
@@ -201,7 +189,7 @@ public class UserResourceTest extends BaseResourceTest{
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 
-		tearDownEntities(locationHeader.getValue());
+		deleteEntityBasedOnLocation(locationHeader.getValue(), userDAO);
 	}
 
 	@Test
@@ -268,7 +256,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		Assert.assertFalse(StringUtils.isBlank(location));
 
-		tearDownEntities(location);
+		deleteEntityBasedOnLocation(locationHeader.getValue(), userDAO);
 
 	}
 	

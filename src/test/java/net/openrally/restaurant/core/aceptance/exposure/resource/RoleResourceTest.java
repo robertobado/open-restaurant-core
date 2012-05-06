@@ -85,18 +85,6 @@ public class RoleResourceTest extends BaseResourceTest {
 		companyDAO.delete(company);
 	}
 
-	private void tearDownEntities(String roleUri) {
-		String roleIdString = roleUri.replace(BaseResource.getServerBasePath()
-				+ BaseResource.SLASH + RoleResource.PATH + BaseResource.SLASH,
-				"");
-
-		long roleId = Long.parseLong(roleIdString);
-
-		Role role = roleDAO.get(roleId);
-		roleDAO.delete(role);
-
-	}
-
 	@Test
 	public void testWrongContentTypePost() throws ClientProtocolException,
 			IOException {
@@ -198,7 +186,7 @@ public class RoleResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 
-		tearDownEntities(locationHeader.getValue());
+		deleteEntityBasedOnLocation(locationHeader.getValue(), roleDAO);
 	}
 
 	@Test
@@ -246,7 +234,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		Assert.assertFalse(StringUtils.isBlank(location));
 
-		tearDownEntities(location);
+		deleteEntityBasedOnLocation(locationHeader.getValue(), roleDAO);
 
 	}
 

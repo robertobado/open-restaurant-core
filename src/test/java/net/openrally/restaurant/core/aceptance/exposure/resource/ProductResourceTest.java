@@ -7,17 +7,17 @@ import javax.ws.rs.core.Response.Status;
 
 import junit.framework.Assert;
 import net.openrally.restaurant.core.exposure.resource.BaseResource;
-import net.openrally.restaurant.core.exposure.resource.ConsumptionIdentifierResource;
+import net.openrally.restaurant.core.exposure.resource.ProductResource;
 import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
-import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
+import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.ConsumptionIdentifierRequestBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierListResponseBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierResponseBody;
+import net.openrally.restaurant.core.request.body.ProductRequestBody;
+import net.openrally.restaurant.core.response.body.ProductListResponseBody;
+import net.openrally.restaurant.core.response.body.ProductResponseBody;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
 
@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
-public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
+public class ProductResourceTest extends BaseResourceTest {
 
 	private Company company;
 	private Configuration configuration;
@@ -47,7 +47,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	private LoginToken loginToken;
 	private Role role;
 	private Permission permission;
-	private ConsumptionIdentifier consumptionIdentifier;
+	private Product product;
 	
 	@Before
 	public void setupEntities() {
@@ -59,15 +59,15 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 		role = createRoleAndPersist(company);
 		associateRoleWithUser(role, user);
 		permission = createFullPermissionAndPersist(role);
-		consumptionIdentifier = createRandomConsumptionIdentifierAndPersist(company);
+		product = createRandomProductAndPersist(company);
 	}
 
 
 	@After
 	public void tearDownEntities() {
 		
-		if(null != consumptionIdentifier){
-			consumptionIdentifierDAO.delete(consumptionIdentifier);
+		if(null != product){
+			productDAO.delete(product);
 		}
 		permissionDAO.delete(permission);
 		
@@ -82,92 +82,92 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 	
 	
-	public ConsumptionIdentifierResourceTest() throws Exception {
+	public ProductResourceTest() throws Exception {
 		super();
 	}
 	
 	@Test
 	public void testWrongContentTypePost() throws ClientProtocolException,
 			IOException {
-		testWrongContentTypePost(ConsumptionIdentifierResource.PATH);
+		testWrongContentTypePost(ProductResource.PATH);
 	}
 
 	@Test
 	public void testWrongAcceptTypePost() throws ClientProtocolException,
 			IOException {
-		testWrongAcceptTypePost(ConsumptionIdentifierResource.PATH);
+		testWrongAcceptTypePost(ProductResource.PATH);
 	}
 
 	@Test
 	public void testInvalidJsonPost() throws ClientProtocolException,
 			IOException {
-		testInvalidJsonPost(ConsumptionIdentifierResource.PATH);
+		testInvalidJsonPost(ProductResource.PATH);
 	}
 
 	@Test
 	public void testEmptyRequestBodyPost() throws ClientProtocolException,
 			IOException {
-		testEmptyRequestBodyPost(ConsumptionIdentifierResource.PATH);
+		testEmptyRequestBodyPost(ProductResource.PATH);
 	}
 
 	@Test
 	public void testWrongContentTypePut() throws ClientProtocolException,
 			IOException {
-		testWrongContentTypePut(ConsumptionIdentifierResource.PATH);
+		testWrongContentTypePut(ProductResource.PATH);
 	}
 
 	@Test
 	public void testWrongAcceptTypePut() throws ClientProtocolException,
 			IOException {
-		testWrongAcceptTypePut(ConsumptionIdentifierResource.PATH);
+		testWrongAcceptTypePut(ProductResource.PATH);
 	}
 
 	@Test
 	public void testInvalidJsonPut() throws ClientProtocolException,
 			IOException {
-		testInvalidJsonPut(ConsumptionIdentifierResource.PATH + BaseResource.SLASH
-				+ consumptionIdentifier.getConsumptionIdentifierId());
+		testInvalidJsonPut(ProductResource.PATH + BaseResource.SLASH
+				+ product.getProductId());
 	}
 
 	@Test
 	public void testEmptyRequestBodyPut() throws ClientProtocolException,
 			IOException {
-		testEmptyRequestBodyPut(ConsumptionIdentifierResource.PATH + BaseResource.SLASH
-				+ consumptionIdentifier.getConsumptionIdentifierId());
+		testEmptyRequestBodyPut(ProductResource.PATH + BaseResource.SLASH
+				+ product.getProductId());
 	}
 
 	@Test
 	public void testWrongContentTypeGet() throws ClientProtocolException,
 			IOException {
-		testWrongContentTypeGet(ConsumptionIdentifierResource.PATH);
+		testWrongContentTypeGet(ProductResource.PATH);
 	}
 
 	@Test
 	public void testWrongAcceptTypeGet() throws ClientProtocolException,
 			IOException {
-		testWrongAcceptTypeGet(ConsumptionIdentifierResource.PATH);
+		testWrongAcceptTypeGet(ProductResource.PATH);
 	}
 
 	@Test
 	public void testWrongContentTypeDelete() throws ClientProtocolException,
 			IOException {
-		testWrongContentTypeDelete(ConsumptionIdentifierResource.PATH);
+		testWrongContentTypeDelete(ProductResource.PATH);
 	}
 
 	@Test
 	public void testWrongAcceptTypeDelete() throws ClientProtocolException,
 			IOException {
-		testWrongAcceptTypeDelete(ConsumptionIdentifierResource.PATH);
+		testWrongAcceptTypeDelete(ProductResource.PATH);
 	}
 	
 	@Test
-	public void testPostMissingIdentifier() throws ClientProtocolException,
+	public void testPostMissingName() throws ClientProtocolException,
 			IOException {
-		HttpPost httpPost = generateBasicHttpPost(ConsumptionIdentifierResource.PATH);
+		HttpPost httpPost = generateBasicHttpPost(ProductResource.PATH);
 
-		ConsumptionIdentifierRequestBody entityRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
-		entityRequestBody.setIdentifier(null);
+		entityRequestBody.setName(null);
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
@@ -182,9 +182,9 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	@Test
 	public void testPostMissingDescription() throws ClientProtocolException,
 			IOException {
-		HttpPost httpPost = generateBasicHttpPost(ConsumptionIdentifierResource.PATH);
+		HttpPost httpPost = generateBasicHttpPost(ProductResource.PATH);
 
-		ConsumptionIdentifierRequestBody entityRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
 		entityRequestBody.setDescription(null);
 
@@ -206,16 +206,16 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		Assert.assertFalse(StringUtils.isBlank(location));
 
-		deleteEntityBasedOnLocation(location, consumptionIdentifierDAO);
+		deleteEntityBasedOnLocation(location, productDAO);
 	}
 	
 	@Test
-	public void testPostCorrectConsumptionIdentifier() throws ClientProtocolException,
+	public void testPostCorrectProduct() throws ClientProtocolException,
 			IOException {
 
-		HttpPost httpPost = generateBasicHttpPost(ConsumptionIdentifierResource.PATH);
+		HttpPost httpPost = generateBasicHttpPost(ProductResource.PATH);
 
-		ConsumptionIdentifierRequestBody entityRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
@@ -235,17 +235,17 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		Assert.assertFalse(StringUtils.isBlank(location));
 
-		deleteEntityBasedOnLocation(location, consumptionIdentifierDAO);
+		deleteEntityBasedOnLocation(location, productDAO);
 
 	}
 	
 	@Test
-	public void testPostDuplicateConsumptionIdentifier() throws ClientProtocolException,
+	public void testPostDuplicateProduct() throws ClientProtocolException,
 			IOException {
 		
-		HttpPost httpPost = generateBasicHttpPost(ConsumptionIdentifierResource.PATH);
+		HttpPost httpPost = generateBasicHttpPost(ProductResource.PATH);
 
-		ConsumptionIdentifierRequestBody entityRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
@@ -270,16 +270,24 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		response = getHttpClient().execute(httpPost);
 
-		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+		Assert.assertEquals(Status.CREATED.getStatusCode(), response
 				.getStatusLine().getStatusCode());
+		
+		locationHeader = response
+				.getLastHeader(BaseResource.LOCATION_HEADER_PARAMETER_NAME);
 
-		deleteEntityBasedOnLocation(location, consumptionIdentifierDAO);
+		Assert.assertNotNull(locationHeader);
+
+		String location2 = locationHeader.getValue();
+
+		deleteEntityBasedOnLocation(location, productDAO);
+		deleteEntityBasedOnLocation(location2, productDAO);
 	}
 	
 	@Test
-	public void testGetInvalidConsumptionIdentifier() throws ClientProtocolException,
+	public void testGetInvalidProduct() throws ClientProtocolException,
 			IOException {
-		HttpGet httpGet = generateBasicHttpGet(ConsumptionIdentifierResource.PATH
+		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH
 				+ BaseResource.SLASH + "xpto");
 
 		HttpResponse response = getHttpClient().execute(httpGet);
@@ -289,11 +297,11 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testGetUnexistingConsumptionIdentifier() throws ClientProtocolException,
+	public void testGetUnexistingProduct() throws ClientProtocolException,
 			IOException {
 
-		HttpGet httpGet = generateBasicHttpGet(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId() + 99);
+		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId() + 99);
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -302,10 +310,10 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testGetCorrectConsumptionIdentifier() throws ClientProtocolException,
+	public void testGetCorrectProduct() throws ClientProtocolException,
 			IOException {
-		HttpGet httpGet = generateBasicHttpGet(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -314,16 +322,16 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		ConsumptionIdentifierResponseBody consumptionIdentifierResponseBody = gson.fromJson(responseBody,
-				ConsumptionIdentifierResponseBody.class);
+		ProductResponseBody productResponseBody = gson.fromJson(responseBody,
+				ProductResponseBody.class);
 
-		Assert.assertEquals(consumptionIdentifierResponseBody.getConsumptionIdentifierId(), consumptionIdentifier.getConsumptionIdentifierId());
-		Assert.assertTrue(StringUtils.equals(consumptionIdentifierResponseBody.getIdentifier(), consumptionIdentifier.getIdentifier()));
-		Assert.assertTrue(StringUtils.equals(consumptionIdentifierResponseBody.getDescription(), consumptionIdentifier.getDescription()));
+		Assert.assertEquals(productResponseBody.getProductId(), product.getProductId());
+		Assert.assertTrue(StringUtils.equals(productResponseBody.getName(), product.getName()));
+		Assert.assertTrue(StringUtils.equals(productResponseBody.getDescription(), product.getDescription()));
 	}
 
 	@Test
-	public void testGetOtherCompanysConsumptionIdentifier() throws ClientProtocolException,
+	public void testGetOtherCompanysProduct() throws ClientProtocolException,
 			IOException {
 
 		Company company = createCompanyAndPersist();
@@ -333,8 +341,8 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 		
 		authorizedToken = loginToken.getToken();
 
-		HttpGet httpGet = generateBasicHttpGet(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -351,11 +359,11 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	@Test
 	public void testGetListCorrectly() throws ClientProtocolException, IOException{
 		
-		ConsumptionIdentifier entity2 = createRandomConsumptionIdentifierAndPersist(company);
+		Product entity2 = createRandomProductAndPersist(company);
 		
-		ConsumptionIdentifier entity3 = createRandomConsumptionIdentifierAndPersist(company);	
+		Product entity3 = createRandomProductAndPersist(company);	
 		
-		HttpGet httpGet = generateBasicHttpGet(ConsumptionIdentifierResource.PATH);
+		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH);
 		
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -364,27 +372,27 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		ConsumptionIdentifierListResponseBody consumptionIdentifierResponseBody = gson.fromJson(responseBody,
-				ConsumptionIdentifierListResponseBody.class);
+		ProductListResponseBody productResponseBody = gson.fromJson(responseBody,
+				ProductListResponseBody.class);
 		
-		ConsumptionIdentifierResponseBody entityResponseBody1 = new ConsumptionIdentifierResponseBody(consumptionIdentifier);
-		ConsumptionIdentifierResponseBody entityResponseBody2 = new ConsumptionIdentifierResponseBody(entity2);
-		ConsumptionIdentifierResponseBody entityResponseBody3 = new ConsumptionIdentifierResponseBody(entity3);
+		ProductResponseBody entityResponseBody1 = new ProductResponseBody(product);
+		ProductResponseBody entityResponseBody2 = new ProductResponseBody(entity2);
+		ProductResponseBody entityResponseBody3 = new ProductResponseBody(entity3);
 		
-		List<ConsumptionIdentifierResponseBody> entityResponseBodyList = consumptionIdentifierResponseBody.getList();
+		List<ProductResponseBody> entityResponseBodyList = productResponseBody.getList();
 		
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody1));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody2));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody3));
 		
-		consumptionIdentifierDAO.delete(entity2);
-		consumptionIdentifierDAO.delete(entity3);
+		productDAO.delete(entity2);
+		productDAO.delete(entity3);
 	}
 	
 	@Test
-	public void testPutInvalidConsumptionIdentifier() throws ClientProtocolException,
+	public void testPutInvalidProduct() throws ClientProtocolException,
 			IOException {
-		HttpPut httpPut = generateBasicHttpPut(ConsumptionIdentifierResource.PATH
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
 				+ BaseResource.SLASH + "xpto");
 
 		HttpResponse response = getHttpClient().execute(httpPut);
@@ -394,10 +402,10 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutUnexistingConsumptionIdentifier() throws ClientProtocolException,
+	public void testPutUnexistingProduct() throws ClientProtocolException,
 			IOException {
-		HttpPut httpPut = generateBasicHttpPut(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + (consumptionIdentifier.getConsumptionIdentifierId() + 99));
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
+				+ BaseResource.SLASH + (product.getProductId() + 99));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -406,17 +414,17 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutMissingIdentifier() throws ClientProtocolException,
+	public void testPutMissingName() throws ClientProtocolException,
 			IOException {
 
-		HttpPut httpPut = generateBasicHttpPut(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody productRequestBody = generateBasicEntityRequestBody();
 
-		consumptionIdentifierRequestBody.setIdentifier(null);
+		productRequestBody.setName(null);
 
-		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
+		String requestBody = getGsonInstance().toJson(productRequestBody);
 
 		httpPut.setEntity(new StringEntity(requestBody));
 
@@ -430,14 +438,14 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	public void testPutMissingDescription() throws ClientProtocolException,
 			IOException {
 
-		HttpPut httpPut = generateBasicHttpPut(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody productRequestBody = generateBasicEntityRequestBody();
 
-		consumptionIdentifierRequestBody.setDescription(null);
+		productRequestBody.setDescription(null);
 
-		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
+		String requestBody = getGsonInstance().toJson(productRequestBody);
 
 		httpPut.setEntity(new StringEntity(requestBody));
 
@@ -448,17 +456,17 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutCorrectConsumptionIdentifier() throws ClientProtocolException,
+	public void testPutCorrectProduct() throws ClientProtocolException,
 			IOException {
 
 		// Alter entity
 
-		HttpPut httpPut = generateBasicHttpPut(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody productRequestBody = generateBasicEntityRequestBody();
 
-		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
+		String requestBody = getGsonInstance().toJson(productRequestBody);
 
 		httpPut.setEntity(new StringEntity(requestBody));
 
@@ -472,8 +480,8 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		// Retrieve entity for comparison
 
-		HttpGet httpGet = generateBasicHttpGet(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
 		response = getHttpClient().execute(httpGet);
 
@@ -482,17 +490,17 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		ConsumptionIdentifierResponseBody consumptionIdentifierResponseBody = gson.fromJson(responseBody,
-				ConsumptionIdentifierResponseBody.class);
+		ProductResponseBody productResponseBody = gson.fromJson(responseBody,
+				ProductResponseBody.class);
 
-		Assert.assertEquals(consumptionIdentifierResponseBody.getConsumptionIdentifierId(), consumptionIdentifier.getConsumptionIdentifierId());
-		Assert.assertTrue(StringUtils.equals(consumptionIdentifierResponseBody.getIdentifier(), consumptionIdentifierRequestBody.getIdentifier()));
-		Assert.assertTrue(StringUtils.equals(consumptionIdentifierResponseBody.getDescription(), consumptionIdentifierRequestBody.getDescription()));
+		Assert.assertEquals(productResponseBody.getProductId(), product.getProductId());
+		Assert.assertTrue(StringUtils.equals(productResponseBody.getName(), productRequestBody.getName()));
+		Assert.assertTrue(StringUtils.equals(productResponseBody.getDescription(), productRequestBody.getDescription()));
 	
 	}
 
 	@Test
-	public void testPutOtherCompanysConsumptionIdentifier() throws ClientProtocolException,
+	public void testPutOtherCompanysProduct() throws ClientProtocolException,
 			IOException {
 		
 		Company company = createCompanyAndPersist();
@@ -502,12 +510,12 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 		
 		authorizedToken = loginToken.getToken();
 
-		HttpPut httpPut = generateBasicHttpPut(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 		
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = generateBasicEntityRequestBody();
+		ProductRequestBody productRequestBody = generateBasicEntityRequestBody();
 
-		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
+		String requestBody = getGsonInstance().toJson(productRequestBody);
 
 		httpPut.setEntity(new StringEntity(requestBody));
 
@@ -523,9 +531,9 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testDeleteIncorrectConsumptionIdentifier() throws ClientProtocolException,
+	public void testDeleteIncorrectProduct() throws ClientProtocolException,
 			IOException {
-		HttpDelete httpDelete = generateBasicHttpDelete(ConsumptionIdentifierResource.PATH
+		HttpDelete httpDelete = generateBasicHttpDelete(ProductResource.PATH
 				+ BaseResource.SLASH + "xpto");
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
@@ -535,10 +543,10 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteUnexistingConsumptionIdentifier() throws ClientProtocolException,
+	public void testDeleteUnexistingProduct() throws ClientProtocolException,
 			IOException {
-		HttpDelete httpDelete = generateBasicHttpDelete(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + (consumptionIdentifier.getConsumptionIdentifierId() + 99));
+		HttpDelete httpDelete = generateBasicHttpDelete(ProductResource.PATH
+				+ BaseResource.SLASH + (product.getProductId() + 99));
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
@@ -547,21 +555,21 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteCorrectConsumptionIdentifier() throws ClientProtocolException,
+	public void testDeleteCorrectProduct() throws ClientProtocolException,
 			IOException {
-		HttpDelete httpDelete = generateBasicHttpDelete(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpDelete httpDelete = generateBasicHttpDelete(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
 		Assert.assertEquals(Status.NO_CONTENT.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 		
-		consumptionIdentifier = null;
+		product = null;
 	}
 
 	@Test
-	public void testDeleteOtherCompanysConsumptionIdentifier() throws ClientProtocolException,
+	public void testDeleteOtherCompanysProduct() throws ClientProtocolException,
 			IOException {
 		
 		Company company = createCompanyAndPersist();
@@ -571,8 +579,8 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 		
 		authorizedToken = loginToken.getToken();
 
-		HttpDelete httpDelete = generateBasicHttpDelete(ConsumptionIdentifierResource.PATH
-				+ BaseResource.SLASH + consumptionIdentifier.getConsumptionIdentifierId());
+		HttpDelete httpDelete = generateBasicHttpDelete(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
 
 		HttpResponse response = getHttpClient().execute(httpDelete);
 
@@ -586,13 +594,13 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 	}
 	
 	// Utilitary functions
-	private ConsumptionIdentifierRequestBody generateBasicEntityRequestBody() {
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = new ConsumptionIdentifierRequestBody();
+	private ProductRequestBody generateBasicEntityRequestBody() {
+		ProductRequestBody productRequestBody = new ProductRequestBody();
 
-		consumptionIdentifierRequestBody.setIdentifier(RandomGenerator.generateString(10));
-		consumptionIdentifierRequestBody.setDescription(RandomGenerator.generateString(50));
+		productRequestBody.setName(RandomGenerator.generateString(10));
+		productRequestBody.setDescription(RandomGenerator.generateString(50));
 
-		return consumptionIdentifierRequestBody;
+		return productRequestBody;
 	}
 
 }

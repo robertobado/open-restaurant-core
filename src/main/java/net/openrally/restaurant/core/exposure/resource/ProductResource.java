@@ -22,12 +22,12 @@ import net.openrally.restaurant.core.exception.ConflictException;
 import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
 import net.openrally.restaurant.core.exception.UnauthorizedException;
-import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
-import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
+import net.openrally.restaurant.core.persistence.dao.ProductDAO;
+import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.ConsumptionIdentifierRequestBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierListResponseBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierResponseBody;
+import net.openrally.restaurant.core.request.body.ProductRequestBody;
+import net.openrally.restaurant.core.response.body.ProductListResponseBody;
+import net.openrally.restaurant.core.response.body.ProductResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -39,18 +39,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.JsonSyntaxException;
 import com.sun.jersey.spi.container.ContainerRequest;
 
-@Path("/consumption-identifier")
+@Path("/product")
 @Component
 @Transactional
-public class ConsumptionIdentifierResource extends BaseResource {
-	
+public class ProductResource extends BaseResource {
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
-	private ConsumptionIdentifierDAO consumptionIdentifierDAO;
+	private ProductDAO productDAO;
 	
-	public static final String PATH = "consumption-identifier";
-	
+	public static final String PATH = "product";
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -61,20 +61,20 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = retrieveConsumptionIdentifierRequestBody(requestBody);
+		ProductRequestBody productRequestBody = retrieveProductRequestBody(requestBody);
 
-		logger.debug("Creating new consumption identifier");
+		logger.debug("Creating new product");
 
-		ConsumptionIdentifier consumptionIdentifier = new ConsumptionIdentifier();
+		Product product = new Product();
 
-		consumptionIdentifier.setCompany(user.getCompany());
-		consumptionIdentifier.setDescription(consumptionIdentifierRequestBody.getDescription());
-		consumptionIdentifier.setIdentifier(consumptionIdentifierRequestBody.getIdentifier());
+		product.setCompany(user.getCompany());
+		product.setDescription(productRequestBody.getDescription());
+		product.setName(productRequestBody.getName());
 
-		logger.debug("Saving new consumption identifier");
+		logger.debug("Saving new product");
 
 		try {
-			consumptionIdentifierDAO.save(consumptionIdentifier);
+			productDAO.save(product);
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -83,7 +83,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		URI locationURI = new URI(BaseResource.getServerBasePath()
 				+ BaseResource.SLASH + PATH + BaseResource.SLASH
-				+ consumptionIdentifier.getConsumptionIdentifierId());
+				+ product.getProductId());
 
 		logger.debug("Finished processing request successfully");
 
@@ -98,16 +98,16 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 		
-		List<ConsumptionIdentifier> entityList = consumptionIdentifierDAO.getAllByCompanyId(user.getCompany().getCompanyId());
+		List<Product> entityList = productDAO.getAllByCompanyId(user.getCompany().getCompanyId());
 		
-		List<ConsumptionIdentifierResponseBody> entityResponseBodyList = new LinkedList<ConsumptionIdentifierResponseBody>();
+		List<ProductResponseBody> entityResponseBodyList = new LinkedList<ProductResponseBody>();
 		
-		for(ConsumptionIdentifier entity : entityList){
-			ConsumptionIdentifierResponseBody entityResponseBody = new ConsumptionIdentifierResponseBody(entity);
+		for(Product entity : entityList){
+			ProductResponseBody entityResponseBody = new ProductResponseBody(entity);
 			entityResponseBodyList.add(entityResponseBody);
 		}
 		
-		ConsumptionIdentifierListResponseBody entityListResponseBody = new ConsumptionIdentifierListResponseBody();
+		ProductListResponseBody entityListResponseBody = new ProductListResponseBody();
 		
 		entityListResponseBody.setList(entityResponseBodyList);
 
@@ -125,17 +125,17 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
+		Product product = retrieveProduct(entityIdString);
 
-		if (consumptionIdentifier.getCompany().getCompanyId() != user
+		if (product.getCompany().getCompanyId() != user
 				.getCompany().getCompanyId()) {
 			throw new ForbiddenException();
 		}
 
-		ConsumptionIdentifierResponseBody consumptionIdentifierResponseBody = new ConsumptionIdentifierResponseBody(
-				consumptionIdentifier);
+		ProductResponseBody productResponseBody = new ProductResponseBody(
+				product);
 
-		return Response.ok(gson.toJson(consumptionIdentifierResponseBody)).build();
+		return Response.ok(gson.toJson(productResponseBody)).build();
 	}
 
 	@DELETE
@@ -149,16 +149,16 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 		
-		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
+		Product product = retrieveProduct(entityIdString);
 
-		if (consumptionIdentifier.getCompany().getCompanyId() != user
+		if (product.getCompany().getCompanyId() != user
 				.getCompany().getCompanyId()) {
 			throw new ForbiddenException();
 		}
 		
 		try {
-			consumptionIdentifierDAO.delete(consumptionIdentifier);
-			consumptionIdentifierDAO.flush();
+			productDAO.delete(product);
+			productDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new ConflictException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
 		}
@@ -178,74 +178,75 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
+		Product product = retrieveProduct(entityIdString);
 
-		if (consumptionIdentifier.getCompany().getCompanyId() != user
+		if (product.getCompany().getCompanyId() != user
 				.getCompany().getCompanyId()) {
 			throw new ForbiddenException();
 		}
 
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody = retrieveConsumptionIdentifierRequestBody(requestBody);
+		ProductRequestBody productRequestBody = retrieveProductRequestBody(requestBody);
 
-		consumptionIdentifier.setIdentifier(consumptionIdentifierRequestBody.getIdentifier());
-		consumptionIdentifier.setDescription(consumptionIdentifierRequestBody.getDescription());
+		product.setName(productRequestBody.getName());
+		product.setDescription(productRequestBody.getDescription());
 		
 		try {
-			consumptionIdentifierDAO.save(consumptionIdentifier);
-			consumptionIdentifierDAO.flush();
+			productDAO.save(product);
+			productDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
 		URI locationURI = new URI(BaseResource.getServerBasePath()
 				+ BaseResource.SLASH + PATH + BaseResource.SLASH
-				+ consumptionIdentifier.getConsumptionIdentifierId());
+				+ product.getProductId());
 
 		logger.debug("Finished processing request successfully");
 
 		return Response.ok().contentLocation(locationURI).build();
 	}
 
-	private ConsumptionIdentifier retrieveConsumptionIdentifier(String consumptionIdentifierIdString)
+	private Product retrieveProduct(String productIdString)
 			throws BadRequestException, NotFoundException {
-		long consumptionIdentifierId;
+		long productId;
 
-		logger.debug("Retrieving consumption identifier from id parameter");
-		logger.debug("Converting consumption identifier id from string to long");
+		logger.debug("Retrieving product from id parameter");
+		logger.debug("Converting product id from string to long");
 
 		try {
-			consumptionIdentifierId = Long.parseLong(consumptionIdentifierIdString);
+			productId = Long.parseLong(productIdString);
 		} catch (NumberFormatException e) {
-			logger.debug("Malformed consumption identifier id: " + consumptionIdentifierIdString);
+			logger.debug("Malformed product id: " + productIdString);
 			throw new BadRequestException(MSG_INVALID_ENTITY_IDENTIFIER);
 		}
 
-		ConsumptionIdentifier consumptionIdentifier = consumptionIdentifierDAO.get(consumptionIdentifierId);
+		Product product = productDAO.get(productId);
 
-		if (null == consumptionIdentifier) {
+		if (null == product) {
 			throw new NotFoundException();
 		}
 
-		return consumptionIdentifier;
+		return product;
 	}
 
-	private ConsumptionIdentifierRequestBody retrieveConsumptionIdentifierRequestBody(
+	private ProductRequestBody retrieveProductRequestBody(
 			String requestBodyString) throws BadRequestException {
-		ConsumptionIdentifierRequestBody consumptionIdentifierRequestBody;
+		ProductRequestBody productRequestBody;
 
 		try {
-			consumptionIdentifierRequestBody = gson.fromJson(requestBodyString,
-					ConsumptionIdentifierRequestBody.class);
+			productRequestBody = gson.fromJson(requestBodyString,
+					ProductRequestBody.class);
 		} catch (JsonSyntaxException e) {
 			throw new BadRequestException(MSG_INVALID_JSON_AS_REQUEST_BODY);
 		}
 
-		if (null == consumptionIdentifierRequestBody) {
+		if (null == productRequestBody) {
 			throw new BadRequestException(MSG_REQUEST_BODY_MISSING_OR_BLANK);
 		}
 
-		consumptionIdentifierRequestBody.validate();
+		productRequestBody.validate();
 
-		return consumptionIdentifierRequestBody;
+		return productRequestBody;
 	}
+	
 }

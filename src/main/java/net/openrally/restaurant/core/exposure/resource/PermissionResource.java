@@ -46,7 +46,6 @@ import com.sun.jersey.spi.container.ContainerRequest;
 @Component
 public class PermissionResource extends BaseResource {
 
-
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public final static String PATH = "permission";
@@ -108,13 +107,13 @@ public class PermissionResource extends BaseResource {
 
 		logger.debug("Building response");
 
-		URI roleLocationURI = new URI(BaseResource.getServerBasePath()
+		URI locationURI = new URI(BaseResource.getServerBasePath()
 				+ BaseResource.SLASH + PATH + BaseResource.SLASH
 				+ permission.getPermissionId());
 
 		logger.debug("Finished processing request successfully");
 
-		return Response.created(roleLocationURI).build();
+		return Response.created(locationURI).build();
 	}
 
 	@GET
@@ -257,13 +256,13 @@ public class PermissionResource extends BaseResource {
 			throw new BadRequestException(MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES_OR_DUPLICATE);
 		}
 
-		URI roleLocationURI = new URI(BaseResource.getServerBasePath()
+		URI locationURI = new URI(BaseResource.getServerBasePath()
 				+ BaseResource.SLASH + PATH + BaseResource.SLASH
 				+ permission.getPermissionId());
 
 		logger.debug("Finished processing request successfully");
 
-		return Response.ok().contentLocation(roleLocationURI).build();
+		return Response.ok().contentLocation(locationURI).build();
 	}
 
 	private Permission retrievePermission(String permissionIdString)

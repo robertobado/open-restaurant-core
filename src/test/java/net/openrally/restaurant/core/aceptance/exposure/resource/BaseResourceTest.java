@@ -1,6 +1,7 @@
 package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,16 +11,21 @@ import javax.ws.rs.core.Response.Status;
 
 import junit.framework.Assert;
 import net.openrally.restaurant.core.exposure.resource.BaseResource;
+import net.openrally.restaurant.core.persistence.dao.AbstractHibernateDAO;
 import net.openrally.restaurant.core.persistence.dao.CompanyDAO;
 import net.openrally.restaurant.core.persistence.dao.ConfigurationDAO;
+import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
 import net.openrally.restaurant.core.persistence.dao.LoginTokenDAO;
 import net.openrally.restaurant.core.persistence.dao.PermissionDAO;
+import net.openrally.restaurant.core.persistence.dao.ProductDAO;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.dao.UserDAO;
 import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
+import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
+import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.RandomGenerator;
@@ -71,6 +77,12 @@ public class BaseResourceTest {
 
 	@Autowired
 	protected PermissionDAO permissionDAO;
+	
+	@Autowired
+	protected ConsumptionIdentifierDAO consumptionIdentifierDAO;
+	
+	@Autowired
+	protected ProductDAO productDAO;
 
 	protected String authorizedToken;
 
@@ -423,6 +435,17 @@ public class BaseResourceTest {
 
 		return httpPut;
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void deleteEntityBasedOnLocation(String locationUri, AbstractHibernateDAO entityDAO) {
+		String entityIdString = locationUri.substring(locationUri.lastIndexOf("/")+1);
+
+		long entityId = Long.parseLong(entityIdString);
+
+		Serializable entity = entityDAO.get(entityId);
+		entityDAO.delete(entity);
+
+	}
 
 	protected Company createCompanyAndPersist() {
 		Company company = new Company();
@@ -525,4 +548,25 @@ public class BaseResourceTest {
 		
 		return permission;
 	}
+	
+	protected ConsumptionIdentifier createRandomConsumptionIdentifierAndPersist(
+			Company company) {
+		ConsumptionIdentifier consumptionIdentifier = new ConsumptionIdentifier();
+		consumptionIdentifier.setCompany(company);
+		consumptionIdentifier.setDescription(RandomGenerator.generateString(50));
+		consumptionIdentifier.setIdentifier(RandomGenerator.generateString(10));
+		consumptionIdentifierDAO.save(consumptionIdentifier);
+		return consumptionIdentifier;
+	}
+	
+	protected Product createRandomProductAndPersist(Company company){
+		Product product = new Product();
+		product.setCompany(company);
+		product.setDescription(RandomGenerator.generateString(50));
+		product.setName(RandomGenerator.generateString(10));
+		productDAO.save(product);
+		return product;
+	}
+	
+	
 }

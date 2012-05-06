@@ -82,18 +82,6 @@ public class PermissionResourceTest extends BaseResourceTest {
 		companyDAO.delete(company);
 	}
 	
-	private void tearDownEntities(String permissionUri) {
-		String permissionIdString = permissionUri.replace(BaseResource.getServerBasePath()
-				+ BaseResource.SLASH + PermissionResource.PATH + BaseResource.SLASH,
-				"");
-
-		long permissionId = Long.parseLong(permissionIdString);
-
-		Permission permission = permissionDAO.get(permissionId);
-		permissionDAO.delete(permission);
-
-	}
-	
 	@Test
 	public void testWrongContentTypePost() throws ClientProtocolException,
 			IOException {
@@ -172,11 +160,11 @@ public class PermissionResourceTest extends BaseResourceTest {
 	public void testPostWithPathNotStartedWithSlash() throws ClientProtocolException, IOException{
 		HttpPost httpPost = generateBasicHttpPost(PermissionResource.PATH);
 
-		PermissionRequestBody roleRequestBody = generateBasicPermissionRequestBody();
+		PermissionRequestBody entityRequestBody = generateBasicPermissionRequestBody();
 
-		roleRequestBody.setPath("example-path");
+		entityRequestBody.setPath("example-path");
 
-		String requestBody = getGsonInstance().toJson(roleRequestBody);
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
 		httpPost.setEntity(new StringEntity(requestBody));
 
@@ -191,11 +179,11 @@ public class PermissionResourceTest extends BaseResourceTest {
 			IOException {
 		HttpPost httpPost = generateBasicHttpPost(PermissionResource.PATH);
 
-		PermissionRequestBody roleRequestBody = generateBasicPermissionRequestBody();
+		PermissionRequestBody entityRequestBody = generateBasicPermissionRequestBody();
 
-		roleRequestBody.setPath(null);
+		entityRequestBody.setPath(null);
 
-		String requestBody = getGsonInstance().toJson(roleRequestBody);
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
 		httpPost.setEntity(new StringEntity(requestBody));
 
@@ -231,7 +219,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		Assert.assertFalse(StringUtils.isBlank(location));
 
-		tearDownEntities(location);
+		deleteEntityBasedOnLocation(location, permissionDAO);
 
 	}
 	
@@ -269,7 +257,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 
-		tearDownEntities(locationHeader.getValue());
+		deleteEntityBasedOnLocation(location, permissionDAO);
 	}
 	
 	@Test
@@ -300,7 +288,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	
 
 	@Test
-	public void testGetInvalidRole() throws ClientProtocolException,
+	public void testGetInvalidPermission() throws ClientProtocolException,
 			IOException {
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
 				+ BaseResource.SLASH + "xpto");
@@ -312,7 +300,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testGetUnexistingRole() throws ClientProtocolException,
+	public void testGetUnexistingPermission() throws ClientProtocolException,
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(PermissionResource.PATH
@@ -458,7 +446,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutInvalidRole() throws ClientProtocolException,
+	public void testPutInvalidPermission() throws ClientProtocolException,
 			IOException {
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
 				+ BaseResource.SLASH + "xpto");
@@ -470,7 +458,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutUnexistingRole() throws ClientProtocolException,
+	public void testPutUnexistingPermission() throws ClientProtocolException,
 			IOException {
 		HttpPut httpPut = generateBasicHttpPut(PermissionResource.PATH
 				+ BaseResource.SLASH + (testPermission.getPermissionId() + 99));
@@ -523,7 +511,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutCorrectRole() throws ClientProtocolException,
+	public void testPutCorrectPermission() throws ClientProtocolException,
 			IOException {
 
 		// Alter entity
@@ -601,7 +589,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testDeleteIncorrectRole() throws ClientProtocolException,
+	public void testDeleteIncorrectPermission() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(PermissionResource.PATH
 				+ BaseResource.SLASH + "xpto");
@@ -613,7 +601,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteUnexistingRole() throws ClientProtocolException,
+	public void testDeleteUnexistingPermission() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(PermissionResource.PATH
 				+ BaseResource.SLASH + (testPermission.getPermissionId() + 99));
@@ -625,7 +613,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteCorrectRole() throws ClientProtocolException,
+	public void testDeleteCorrectPermission() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(PermissionResource.PATH
 				+ BaseResource.SLASH + testPermission.getPermissionId());
@@ -639,7 +627,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteOtherCompanysRole() throws ClientProtocolException,
+	public void testDeleteOtherCompanysPermission() throws ClientProtocolException,
 			IOException {
 		
 		Company company = createCompanyAndPersist();
