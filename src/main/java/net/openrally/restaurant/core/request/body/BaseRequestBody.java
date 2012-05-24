@@ -49,6 +49,14 @@ public class BaseRequestBody {
 									+ field.getName() + " missing or blank");
 						}
 					}
+					else if (field.getType() == Double.class || field.getType() == double.class){
+						Double fieldValue = (Double) field.get(this);
+
+						if (fieldValue == null) {
+							throw new BadRequestException("Parameter "
+									+ field.getName() + " missing or blank");
+						}
+					}
 					else{
 						logger.error("Unkown request body validation policy. Class " + this.getClass().getSimpleName() + ", field name " + field.getName() + ", field type " + field.getType().getSimpleName() + ", annotation ParameterRequired");
 						throw new InternalServerErrorException("Error while validating request");

@@ -358,7 +358,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPostDuplicateProduct() throws ClientProtocolException,
+	public void testPostDuplicateEntity() throws ClientProtocolException,
 			IOException {
 
 		HttpPost httpPost = generateBasicHttpPost(BillResource.PATH);
@@ -1353,7 +1353,6 @@ public class BillResourceTest extends BaseResourceTest {
 		configurationDAO.delete(configuration);
 		companyDAO.delete(company);
 	}
-	
 
 	// Utilitary functions
 	private BillRequestBody generateBasicEntityRequestBody() {

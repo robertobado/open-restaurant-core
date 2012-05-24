@@ -1,10 +1,16 @@
 package net.openrally.restaurant.core.request.body;
 
+import net.openrally.restaurant.core.annotation.ParameterRequired;
+
 public class ProductRequestBody extends BaseRequestBody {
 
+	@ParameterRequired
 	private String name;
 	
 	private String description;
+	
+	@ParameterRequired
+	private Double price;
 
 	public String getName() {
 		return name;
@@ -20,5 +26,13 @@ public class ProductRequestBody extends BaseRequestBody {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 }

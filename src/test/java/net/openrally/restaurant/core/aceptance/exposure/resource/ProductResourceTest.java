@@ -210,6 +210,25 @@ public class ProductResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
+	public void testPostMissingPrice() throws ClientProtocolException,
+			IOException {
+		HttpPost httpPost = generateBasicHttpPost(ProductResource.PATH);
+
+		ProductRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setPrice(null);
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPost.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPost);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+	
+	@Test
 	public void testPostCorrectProduct() throws ClientProtocolException,
 			IOException {
 
@@ -328,6 +347,7 @@ public class ProductResourceTest extends BaseResourceTest {
 		Assert.assertEquals(productResponseBody.getProductId(), product.getProductId());
 		Assert.assertTrue(StringUtils.equals(productResponseBody.getName(), product.getName()));
 		Assert.assertTrue(StringUtils.equals(productResponseBody.getDescription(), product.getDescription()));
+		Assert.assertTrue(Double.compare(productResponseBody.getPrice(), product.getPrice()) == 0);
 	}
 
 	@Test
@@ -454,6 +474,27 @@ public class ProductResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.OK.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
+	
+	@Test
+	public void testPutMissingPrice() throws ClientProtocolException,
+			IOException {
+
+		HttpPut httpPut = generateBasicHttpPut(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
+
+		ProductRequestBody productRequestBody = generateBasicEntityRequestBody();
+
+		productRequestBody.setPrice(null);
+
+		String requestBody = getGsonInstance().toJson(productRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
 
 	@Test
 	public void testPutCorrectProduct() throws ClientProtocolException,
@@ -496,7 +537,7 @@ public class ProductResourceTest extends BaseResourceTest {
 		Assert.assertEquals(productResponseBody.getProductId(), product.getProductId());
 		Assert.assertTrue(StringUtils.equals(productResponseBody.getName(), productRequestBody.getName()));
 		Assert.assertTrue(StringUtils.equals(productResponseBody.getDescription(), productRequestBody.getDescription()));
-	
+		Assert.assertTrue(Double.compare(productResponseBody.getPrice(), productRequestBody.getPrice()) == 0);
 	}
 
 	@Test
@@ -599,6 +640,7 @@ public class ProductResourceTest extends BaseResourceTest {
 
 		productRequestBody.setName(RandomGenerator.generateString(10));
 		productRequestBody.setDescription(RandomGenerator.generateString(50));
+		productRequestBody.setPrice(RandomGenerator.randomPositiveDouble(100));
 
 		return productRequestBody;
 	}

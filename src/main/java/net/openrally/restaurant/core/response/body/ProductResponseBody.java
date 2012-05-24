@@ -9,11 +9,13 @@ public class ProductResponseBody {
 	private Long productId;
 	private String name;
 	private String description;
+	private Double price;
 	
 	public ProductResponseBody(Product product) {
 		this.productId = product.getProductId();
 		this.name = product.getName();
 		this.description = product.getDescription();
+		this.price = product.getPrice();
 	}
 	public Long getProductId() {
 		return productId;
@@ -34,6 +36,13 @@ public class ProductResponseBody {
 		this.description = description;
 	}
 	
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+	
 	public boolean equals(Object other){
 		if (other == null) return false;
 	    if (other == this) return true;
@@ -47,6 +56,9 @@ public class ProductResponseBody {
 	    	return false;
 	    }
 	    if(!StringUtils.equals(otherEntityBody.getDescription(), this.getDescription())){
+	    	return false;
+	    }
+	    if(!(Double.compare(otherEntityBody.getPrice(), this.getPrice()) == 0)){
 	    	return false;
 	    }
 	    return true;

@@ -14,6 +14,7 @@ import net.openrally.restaurant.core.exposure.resource.BaseResource;
 import net.openrally.restaurant.core.exposure.resource.BillResource;
 import net.openrally.restaurant.core.persistence.dao.AbstractHibernateDAO;
 import net.openrally.restaurant.core.persistence.dao.BillDAO;
+import net.openrally.restaurant.core.persistence.dao.BillItemDAO;
 import net.openrally.restaurant.core.persistence.dao.CompanyDAO;
 import net.openrally.restaurant.core.persistence.dao.ConfigurationDAO;
 import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
@@ -23,6 +24,7 @@ import net.openrally.restaurant.core.persistence.dao.ProductDAO;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.dao.UserDAO;
 import net.openrally.restaurant.core.persistence.entity.Bill;
+import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
@@ -89,6 +91,9 @@ public class BaseResourceTest {
 	
 	@Autowired
 	protected BillDAO billDAO;
+	
+	@Autowired
+	protected BillItemDAO billItemDAO;
 
 	protected String authorizedToken;
 
@@ -570,6 +575,7 @@ public class BaseResourceTest {
 		product.setCompany(company);
 		product.setDescription(RandomGenerator.generateString(50));
 		product.setName(RandomGenerator.generateString(10));
+		product.setPrice(RandomGenerator.randomPositiveDouble(100));
 		productDAO.save(product);
 		return product;
 	}
@@ -581,5 +587,15 @@ public class BaseResourceTest {
 		bill.setConsumptionIdentifier(consumptionIdentifier);
 		billDAO.save(bill);
 		return bill;
+	}	
+	
+	protected BillItem createRandomBillItemAndPersist(Bill bill, Product product){
+		BillItem billItem = new BillItem();
+		billItem.setBill(bill);
+		billItem.setProduct(product);
+		billItem.setQuantity(RandomGenerator.randomPositiveDouble(100));
+		billItem.setUnitPrice(product.getPrice());
+		billItemDAO.save(billItem);
+		return billItem;
 	}	
 }

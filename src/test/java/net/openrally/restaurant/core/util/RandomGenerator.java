@@ -45,4 +45,12 @@ public class RandomGenerator {
 	public static boolean randomBoolean(){
 		return random.nextBoolean();
 	}
+
+	public static Double randomPositiveDouble(int length) {
+		return Math.abs(randomDouble(length));
+	}
+
+	public static Double randomDouble(int length) {
+		return random.nextDouble() + randomPositiveInt(length);
+	}
 }

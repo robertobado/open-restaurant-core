@@ -71,6 +71,7 @@ public class ProductResource extends BaseResource {
 		product.setCompany(user.getCompany());
 		product.setDescription(productRequestBody.getDescription());
 		product.setName(productRequestBody.getName());
+		product.setPrice(productRequestBody.getPrice());
 
 		logger.debug("Saving new product");
 
@@ -199,6 +200,7 @@ public class ProductResource extends BaseResource {
 
 		product.setName(productRequestBody.getName());
 		product.setDescription(productRequestBody.getDescription());
+		product.setPrice(productRequestBody.getPrice());
 
 		try {
 			productDAO.update(product);
