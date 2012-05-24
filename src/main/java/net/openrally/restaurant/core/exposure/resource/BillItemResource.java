@@ -6,9 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -175,8 +177,6 @@ public class BillItemResource extends BaseResource {
 				user.getCompany().getCompanyId()) != 0) {
 			throw new ForbiddenException();
 		}
-		
-		try{
 
 		List<BillItem> entityList = billItemDAO.getAllByCompanyIdAndBillId(user
 				.getCompany().getCompanyId(), bill.getBillId());
@@ -195,11 +195,124 @@ public class BillItemResource extends BaseResource {
 		entityListResponseBody.setList(entityResponseBodyList);
 
 		return Response.ok(gson.toJson(entityListResponseBody)).build();
+	}
+	
+	@PUT
+	@Path("/{entityId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional(rollbackFor = BadRequestException.class)
+	public Response put(String requestBody,
+			@PathParam("entityId") String entityIdString,
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			URISyntaxException, UnauthorizedException, ConflictException {
+
+		User user = getRequestUser(loginToken);
+
+		BillItem billItem = retrieveEntity(entityIdString);
+
+		if (Long.compare(billItem.getBill().getConsumptionIdentifier().getCompany()
+				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+			throw new ForbiddenException();
+		}
+
+		BillItemRequestBody entityRequestBody = retrieveEntityRequestBody(requestBody);
 		
+		if (Long.compare(billItem.getBill()
+				.getBillId(), entityRequestBody
+				.getBillId()) != 0) {
+
+			Bill bill = billDAO
+					.get(entityRequestBody.getBillId());
+			
+			if(null == bill){
+				throw new NotFoundException("Bill not found");
+			}
+
+			if (Long.compare(bill.getConsumptionIdentifier().getCompany().getCompanyId(),
+					user.getCompany().getCompanyId()) != 0) {
+				throw new ForbiddenException();
+			}
+			
+			if(!StringUtils.equals(bill.getStatus(),BillResource.Status.OPEN.toString())){
+				throw new ConflictException("Target bill is not open");
+			}
+
+			billItem.setBill(bill);
 		}
-		catch(Throwable t){
-			return null;
+		
+		if (Long.compare(billItem.getProduct()
+				.getProductId(), entityRequestBody
+				.getProductId()) != 0) {
+
+			Product product = productDAO
+					.get(entityRequestBody.getProductId());
+			
+			if(null == product){
+				throw new NotFoundException("Product not found");
+			}
+
+			if (Long.compare(product.getCompany().getCompanyId(),
+					user.getCompany().getCompanyId()) != 0) {
+				throw new ForbiddenException();
+			}
+
+			billItem.setProduct(product);
+			billItem.setUnitPrice(product.getPrice());
 		}
+
+		
+		billItem.setQuantity(entityRequestBody.getQuantity());
+		
+		logger.debug("Updating bill item");
+
+		try {
+			billItemDAO.update(billItem);
+			billDAO.flush();
+		} catch (ConstraintViolationException e) {
+			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
+		}
+
+		logger.debug("Building response");
+
+		URI locationURI = new URI(BaseResource.getServerBasePath()
+				+ BaseResource.SLASH + PATH + BaseResource.SLASH
+				+ billItem.getBillItemId());
+
+		logger.debug("Finished processing request successfully");
+
+		return Response.ok().contentLocation(locationURI).build();
+	}
+	
+	@DELETE
+	@Path("/{entityId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional(rollbackFor = ConflictException.class)
+	public Response delete(@PathParam("entityId") String entityIdString,
+			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
+			throws BadRequestException, NotFoundException, ForbiddenException,
+			ConflictException, UnauthorizedException {
+
+		User user = getRequestUser(loginToken);
+
+		BillItem billItem = retrieveEntity(entityIdString);
+
+		if (Long.compare(billItem.getBill().getConsumptionIdentifier().getCompany()
+				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+			throw new ForbiddenException();
+		}
+
+		try {
+			billItemDAO.delete(billItem);
+			billItemDAO.flush();
+		} catch (ConstraintViolationException e) {
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+		}
+
+		return Response.noContent().build();
 	}
 	
 	private BillItemRequestBody retrieveEntityRequestBody(String requestBodyString)

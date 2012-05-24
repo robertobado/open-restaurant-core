@@ -704,6 +704,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 		
+		billDAO.delete(bill);
 		consumptionIdentifierDAO.delete(consumptionIdentifier);
 		companyDAO.delete(company);
 	}
@@ -755,6 +756,11 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Long.compare(entityResponseBody.getProductId(), entityRequestBody.getProductId()),0);
 		Assert.assertEquals(Double.compare(entityResponseBody.getQuantity(), entityRequestBody.getQuantity()),0);
 		Assert.assertEquals(Double.compare(entityResponseBody.getUnitPrice(), product.getPrice()),0);
+		
+		billItemDAO.delete(billItem);
+		billItem = null;
+		
+		productDAO.delete(product);
 		}
 
 	@Test
@@ -823,7 +829,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.NO_CONTENT.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 		
-		bill = null;
+		billItem = null;
 	}
 
 	@Test

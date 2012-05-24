@@ -318,6 +318,10 @@ public class BillResource extends BaseResource {
 
 			ConsumptionIdentifier consumptionIdentifier = consumptionIdentifierDAO
 					.get(entityRequestBody.getConsumptionIdentifierId());
+			
+			if(null == consumptionIdentifier){
+				throw new NotFoundException("Consumption identifier not found");
+			}
 
 			if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
 					user.getCompany().getCompanyId()) != 0) {

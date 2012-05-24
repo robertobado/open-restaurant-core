@@ -7,7 +7,10 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.openrally.restaurant.core.persistence.entity.Bill;
 import net.openrally.restaurant.core.persistence.entity.BillItem;
+import net.openrally.restaurant.core.persistence.entity.Company;
+import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
 
 @Repository("billItemDAO")
 @Transactional
@@ -22,9 +25,15 @@ public class BillItemDAO extends AbstractHibernateDAO<BillItem, Long> {
 	public List<BillItem> getAllByCompanyIdAndBillId(Long companyId, Long billId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session
-				.createQuery("from "
+				.createQuery("select bi from "
 						+ domainClass.getSimpleName()
-						+ " where companyId = :companyId AND billId = :billId");
+						+ " bi, "
+						+ Bill.class.getSimpleName()
+						+" b, "
+						+ ConsumptionIdentifier.class.getSimpleName()
+						+" ci, "
+						+ Company.class.getSimpleName()
+						+" c where c.companyId = :companyId AND ci.company = c AND b.consumptionIdentifier = ci AND b.billId = :billId AND bi.bill = b");
 		query.setParameter("companyId", companyId);
 		query.setParameter("billId", billId);
 		return query.list();
