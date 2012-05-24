@@ -22,8 +22,6 @@ import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.request.body.BillItemRequestBody;
 import net.openrally.restaurant.core.response.body.BillItemListResponseBody;
 import net.openrally.restaurant.core.response.body.BillItemResponseBody;
-import net.openrally.restaurant.core.response.body.BillListResponseBody;
-import net.openrally.restaurant.core.response.body.BillResponseBody;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
 
@@ -31,8 +29,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.junit.After;
 import org.junit.Before;
@@ -345,8 +345,8 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		Assert.assertFalse(StringUtils.isBlank(location2));
 
-		deleteEntityBasedOnLocation(location1, billDAO);
-		deleteEntityBasedOnLocation(location2, billDAO);
+		deleteEntityBasedOnLocation(location1, billItemDAO);
+		deleteEntityBasedOnLocation(location2, billItemDAO);
 	}
 	
 	@Test
@@ -475,7 +475,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
-		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+		Assert.assertEquals(Status.NOT_FOUND.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
 
@@ -563,6 +563,292 @@ public class BillItemResourceTest extends BaseResourceTest {
 		productDAO.delete(product3);
 		productDAO.delete(product4);
 		productDAO.delete(product5);
+	}
+	
+	@Test
+	public void testPutInvalidEntity() throws ClientProtocolException,
+			IOException {
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + "xpto");
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+
+	@Test
+	public void testPutUnexistingEntity() throws ClientProtocolException,
+			IOException {
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + (billItem.getBillItemId() + 99));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.NOT_FOUND.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+
+	@Test
+	public void testPutMissingBillId() throws ClientProtocolException,
+			IOException {
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setBillId(null);
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+	
+	@Test
+	public void testPutMissingProductId() throws ClientProtocolException,
+			IOException {
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setProductId(null);
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+	
+	@Test
+	public void testPutMissingQuantity() throws ClientProtocolException,
+			IOException {
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setQuantity(null);
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+	
+	@Test
+	public void testPutMoveBillItemToAClosedBill() throws ClientProtocolException,
+			IOException {
+		ConsumptionIdentifier consumptionIdentifier2 = createRandomConsumptionIdentifierAndPersist(company);
+		Bill bill2 = createOpenBillAndPersist(consumptionIdentifier2);
+		bill2.setStatus(BillResource.Status.CLOSED.toString());
+		billDAO.update(bill2);
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setBillId(bill2.getBillId());
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.CONFLICT.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+		
+		billDAO.delete(bill2);
+		consumptionIdentifierDAO.delete(consumptionIdentifier2);
+	}
+	
+	@Test
+	public void testPutMoveBillItemToOtherCompanysBill() throws ClientProtocolException,
+			IOException {
+		
+		Company company = createCompanyAndPersist();
+		ConsumptionIdentifier consumptionIdentifier = createRandomConsumptionIdentifierAndPersist(company);
+		Bill bill = createOpenBillAndPersist(consumptionIdentifier);
+		
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setBillId(bill.getBillId());
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+		
+		consumptionIdentifierDAO.delete(consumptionIdentifier);
+		companyDAO.delete(company);
+	}
+
+	@Test
+	public void testPutCorrectEntity() throws ClientProtocolException,
+			IOException {
+		
+		Product product = createRandomProductAndPersist(company);
+
+		// Alter entity
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+		
+		entityRequestBody.setProductId(product.getProductId());
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.OK.getStatusCode(), response.getStatusLine()
+				.getStatusCode());
+		
+		// Consume response body to release connection for next request
+				StringUtilities.httpResponseAsString(response);
+
+		// Retrieve entity for comparison
+
+		HttpGet httpGet = generateBasicHttpGet(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		response = getHttpClient().execute(httpGet);
+
+		Assert.assertEquals(Status.OK.getStatusCode(), response.getStatusLine()
+				.getStatusCode());
+
+		String responseBody = StringUtilities.httpResponseAsString(response);
+
+		BillItemResponseBody entityResponseBody = gson.fromJson(responseBody,
+				BillItemResponseBody.class);
+		
+		Assert.assertEquals(Long.compare(entityResponseBody.getBillItemId(), billItem.getBillItemId()),0);
+		Assert.assertEquals(Long.compare(entityResponseBody.getBillId(), entityRequestBody.getBillId()),0);
+		Assert.assertEquals(Long.compare(entityResponseBody.getProductId(), entityRequestBody.getProductId()),0);
+		Assert.assertEquals(Double.compare(entityResponseBody.getQuantity(), entityRequestBody.getQuantity()),0);
+		Assert.assertEquals(Double.compare(entityResponseBody.getUnitPrice(), product.getPrice()),0);
+		}
+
+	@Test
+	public void testPutOtherCompanysEntity() throws ClientProtocolException,
+			IOException {
+		
+		Company company = createCompanyAndPersist();
+		Configuration configuration = createConfigurationAndPersist(company);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+		
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+
+		loginTokenDAO.delete(loginToken);
+		userDAO.delete(user);
+		configurationDAO.delete(configuration);
+		companyDAO.delete(company);
+	}
+	
+	@Test
+	public void testDeleteIncorrectEntity() throws ClientProtocolException,
+			IOException {
+		HttpDelete httpDelete = generateBasicHttpDelete(BillItemResource.PATH
+				+ BaseResource.SLASH + "xpto");
+
+		HttpResponse response = getHttpClient().execute(httpDelete);
+
+		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+
+	@Test
+	public void testDeleteUnexistingEntity() throws ClientProtocolException,
+			IOException {
+		HttpDelete httpDelete = generateBasicHttpDelete(BillItemResource.PATH
+				+ BaseResource.SLASH + (billItem.getBillItemId() + 99));
+
+		HttpResponse response = getHttpClient().execute(httpDelete);
+
+		Assert.assertEquals(Status.NOT_FOUND.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+	}
+
+	@Test
+	public void testDeleteCorrectEntity() throws ClientProtocolException,
+			IOException {
+		HttpDelete httpDelete = generateBasicHttpDelete(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		HttpResponse response = getHttpClient().execute(httpDelete);
+
+		Assert.assertEquals(Status.NO_CONTENT.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+		
+		bill = null;
+	}
+
+	@Test
+	public void testDeleteOtherCompanysEntity() throws ClientProtocolException,
+			IOException {
+		
+		Company company = createCompanyAndPersist();
+		Configuration configuration = createConfigurationAndPersist(company);
+		User user = createUserAndPersist(configuration);
+		LoginToken loginToken = createLoginTokenAndPersist(user);
+		
+		authorizedToken = loginToken.getToken();
+
+		HttpDelete httpDelete = generateBasicHttpDelete(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		HttpResponse response = getHttpClient().execute(httpDelete);
+
+		Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+
+		loginTokenDAO.delete(loginToken);
+		userDAO.delete(user);
+		configurationDAO.delete(configuration);
+		companyDAO.delete(company);
 	}
 	
 	// Utilitary functions

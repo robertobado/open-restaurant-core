@@ -395,7 +395,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void postBillOnOtherCompanysConsumptionIdentifier()
+	public void testPostBillOnOtherCompanysConsumptionIdentifier()
 			throws ClientProtocolException, IOException {
 
 		Company company = createCompanyAndPersist();
@@ -1092,7 +1092,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testPutUnexistingProduct() throws ClientProtocolException,
+	public void testPutUnexistingEntity() throws ClientProtocolException,
 			IOException {
 		HttpPut httpPut = generateBasicHttpPut(BillResource.PATH
 				+ BaseResource.SLASH + (bill.getBillId() + 99));
@@ -1292,7 +1292,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testDeleteIncorrectProduct() throws ClientProtocolException,
+	public void testDeleteIncorrectEntity() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(BillResource.PATH
 				+ BaseResource.SLASH + "xpto");
@@ -1304,7 +1304,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteUnexistingProduct() throws ClientProtocolException,
+	public void testDeleteUnexistingEntity() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(BillResource.PATH
 				+ BaseResource.SLASH + (bill.getBillId() + 99));
@@ -1316,7 +1316,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteCorrectProduct() throws ClientProtocolException,
+	public void testDeleteCorrectEntity() throws ClientProtocolException,
 			IOException {
 		HttpDelete httpDelete = generateBasicHttpDelete(BillResource.PATH
 				+ BaseResource.SLASH + bill.getBillId());
@@ -1330,7 +1330,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testDeleteOtherCompanysProduct() throws ClientProtocolException,
+	public void testDeleteOtherCompanysEntity() throws ClientProtocolException,
 			IOException {
 		
 		Company company = createCompanyAndPersist();

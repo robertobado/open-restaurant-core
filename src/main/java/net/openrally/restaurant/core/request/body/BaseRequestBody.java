@@ -82,6 +82,14 @@ public class BaseRequestBody {
 									+ field.getName() + " negative or zero");
 						}
 					}
+					else if (field.getType() == Double.class || field.getType() == double.class) {
+						Double fieldValue = (Double) field.get(this);
+
+						if (fieldValue <= 0) {
+							throw new BadRequestException("Parameter "
+									+ field.getName() + " negative or zero");
+						}
+					}
 					else{
 						logger.error("Unkown request body validation policy. Class " + this.getClass().getSimpleName() + ", field name " + field.getName() + ", field type " + field.getType().getSimpleName() + ", annotation ParameterValuePositive");
 						throw new InternalServerErrorException("Error while validating request");
