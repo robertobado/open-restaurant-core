@@ -1252,11 +1252,11 @@ public class BillResourceTest extends BaseResourceTest {
 		BillResponseBody entityResponseBody = gson.fromJson(responseBody,
 				BillResponseBody.class);
 
-		Assert.assertEquals(Long.compare(entityResponseBody.getBillId(), bill.getBillId()),0);
+		Assert.assertTrue(entityResponseBody.getBillId().equals(bill.getBillId()));
 		Assert.assertTrue(StringUtils.equals(entityResponseBody.getStatus(), entityRequestBody.getStatus()));
-		Assert.assertEquals(Long.compare(entityResponseBody.getConsumptionIdentifierId(), entityRequestBody.getConsumptionIdentifierId()),0);
-		Assert.assertEquals(Long.compare(entityResponseBody.getCloseTimestamp(), entityRequestBody.getCloseTimestamp()),0);
-		Assert.assertEquals(Long.compare(entityResponseBody.getOpenTimestamp(), entityRequestBody.getOpenTimestamp()),0);
+		Assert.assertTrue(entityResponseBody.getConsumptionIdentifierId().equals(entityRequestBody.getConsumptionIdentifierId()));
+		Assert.assertTrue(entityResponseBody.getCloseTimestamp().equals(entityRequestBody.getCloseTimestamp()));
+		Assert.assertTrue(entityResponseBody.getOpenTimestamp().equals(entityRequestBody.getOpenTimestamp()));
 	
 	}
 

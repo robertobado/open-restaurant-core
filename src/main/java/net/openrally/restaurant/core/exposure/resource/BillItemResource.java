@@ -79,8 +79,7 @@ public class BillItemResource extends BaseResource {
 		Bill bill = billDAO
 				.get(entityRequestBody.getBillId());
 
-		if (Long.compare(bill.getConsumptionIdentifier().getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 		
@@ -91,8 +90,7 @@ public class BillItemResource extends BaseResource {
 		Product product = productDAO
 				.get(entityRequestBody.getProductId());
 
-		if (Long.compare(bill.getConsumptionIdentifier().getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -109,6 +107,7 @@ public class BillItemResource extends BaseResource {
 
 		try {
 			billItemDAO.save(billItem);
+			billItemDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -138,8 +137,8 @@ public class BillItemResource extends BaseResource {
 
 		BillItem billItem = retrieveEntity(entityIdString);
 
-		if (Long.compare(billItem.getBill().getConsumptionIdentifier().getCompany()
-				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+		if (!billItem.getBill().getConsumptionIdentifier().getCompany()
+				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -173,8 +172,7 @@ public class BillItemResource extends BaseResource {
 			throw new NotFoundException("Invalid billId");
 		}
 
-		if (Long.compare(bill.getConsumptionIdentifier().getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -212,16 +210,16 @@ public class BillItemResource extends BaseResource {
 
 		BillItem billItem = retrieveEntity(entityIdString);
 
-		if (Long.compare(billItem.getBill().getConsumptionIdentifier().getCompany()
-				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+		if (!billItem.getBill().getConsumptionIdentifier().getCompany()
+				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
 		BillItemRequestBody entityRequestBody = retrieveEntityRequestBody(requestBody);
 		
-		if (Long.compare(billItem.getBill()
-				.getBillId(), entityRequestBody
-				.getBillId()) != 0) {
+		if (!billItem.getBill()
+				.getBillId().equals(entityRequestBody
+				.getBillId())) {
 
 			Bill bill = billDAO
 					.get(entityRequestBody.getBillId());
@@ -230,8 +228,7 @@ public class BillItemResource extends BaseResource {
 				throw new NotFoundException("Bill not found");
 			}
 
-			if (Long.compare(bill.getConsumptionIdentifier().getCompany().getCompanyId(),
-					user.getCompany().getCompanyId()) != 0) {
+			if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 				throw new ForbiddenException();
 			}
 			
@@ -242,9 +239,9 @@ public class BillItemResource extends BaseResource {
 			billItem.setBill(bill);
 		}
 		
-		if (Long.compare(billItem.getProduct()
-				.getProductId(), entityRequestBody
-				.getProductId()) != 0) {
+		if (!billItem.getProduct()
+				.getProductId().equals(entityRequestBody
+				.getProductId())) {
 
 			Product product = productDAO
 					.get(entityRequestBody.getProductId());
@@ -253,8 +250,7 @@ public class BillItemResource extends BaseResource {
 				throw new NotFoundException("Product not found");
 			}
 
-			if (Long.compare(product.getCompany().getCompanyId(),
-					user.getCompany().getCompanyId()) != 0) {
+			if (!product.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 				throw new ForbiddenException();
 			}
 
@@ -299,8 +295,8 @@ public class BillItemResource extends BaseResource {
 
 		BillItem billItem = retrieveEntity(entityIdString);
 
-		if (Long.compare(billItem.getBill().getConsumptionIdentifier().getCompany()
-				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+		if (!billItem.getBill().getConsumptionIdentifier().getCompany()
+				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 

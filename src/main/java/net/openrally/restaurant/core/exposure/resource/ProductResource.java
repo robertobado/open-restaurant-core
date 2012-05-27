@@ -77,6 +77,7 @@ public class ProductResource extends BaseResource {
 
 		try {
 			productDAO.save(product);
+			productDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -135,8 +136,8 @@ public class ProductResource extends BaseResource {
 
 		Product product = retrieveProduct(entityIdString);
 
-		if (Long.compare(product.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!product.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -160,8 +161,8 @@ public class ProductResource extends BaseResource {
 
 		Product product = retrieveProduct(entityIdString);
 
-		if (Long.compare(product.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!product.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -191,8 +192,8 @@ public class ProductResource extends BaseResource {
 
 		Product product = retrieveProduct(entityIdString);
 
-		if (Long.compare(product.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!product.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 

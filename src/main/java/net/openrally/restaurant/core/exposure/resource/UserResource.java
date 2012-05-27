@@ -99,6 +99,7 @@ public class UserResource extends BaseResource {
 
 		try {
 			userDAO.save(newUser);
+			userDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -164,8 +165,8 @@ public class UserResource extends BaseResource {
 
 		User queryUser = retrieveUser(userIdString);
 
-		if (Long.compare(queryUser.getCompany().getCompanyId(), user
-				.getCompany().getCompanyId()) != 0) {
+		if (!queryUser.getCompany().getCompanyId().equals(user
+				.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -191,8 +192,8 @@ public class UserResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (Long.compare(deleteUser.getCompany().getCompanyId(), user
-				.getCompany().getCompanyId()) != 0) {
+		if (!deleteUser.getCompany().getCompanyId().equals(user
+				.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -226,8 +227,8 @@ public class UserResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (Long.compare(putUser.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!putUser.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -318,8 +319,8 @@ public class UserResource extends BaseResource {
 					throw new NotFoundException("Role not found");
 				}
 
-				if (Long.compare(role.getCompany().getCompanyId(), user
-						.getCompany().getCompanyId()) != 0) {
+				if (!role.getCompany().getCompanyId().equals(user
+						.getCompany().getCompanyId())) {
 					throw new ForbiddenException();
 				}
 

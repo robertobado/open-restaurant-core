@@ -49,7 +49,7 @@ public class RoleResponseBody {
 	    if (other == this) return true;
 	    if (!(other instanceof RoleResponseBody)) return false;
 	    RoleResponseBody otherRoleResponseBody = (RoleResponseBody)other;
-	    if(otherRoleResponseBody.getRoleId() != this.getRoleId()){
+	    if(null == otherRoleResponseBody.getRoleId() || !otherRoleResponseBody.getRoleId().equals(this.getRoleId())){
 	    	return false;
 	    }
 	    if(!StringUtils.equals(otherRoleResponseBody.getName(), this.getName())){

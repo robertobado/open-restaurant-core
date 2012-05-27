@@ -421,11 +421,11 @@ public class BillItemResourceTest extends BaseResourceTest {
 		BillItemResponseBody entityResponseBody = gson.fromJson(responseBody,
 				BillItemResponseBody.class);
 
-		Assert.assertEquals(Long.compare(entityResponseBody.getBillItemId(), billItem.getBillItemId()),0);
-		Assert.assertEquals(Long.compare(entityResponseBody.getBillId(), billItem.getBill().getBillId()),0);
-		Assert.assertEquals(Long.compare(entityResponseBody.getProductId(), billItem.getProduct().getProductId()),0);
-		Assert.assertEquals(Double.compare(entityResponseBody.getQuantity(), billItem.getQuantity()),0);
-		Assert.assertEquals(Double.compare(entityResponseBody.getUnitPrice(), billItem.getUnitPrice()),0);
+		Assert.assertTrue(entityResponseBody.getBillItemId().equals(billItem.getBillItemId()));
+		Assert.assertTrue(entityResponseBody.getBillId().equals(billItem.getBill().getBillId()));
+		Assert.assertTrue(entityResponseBody.getProductId().equals(billItem.getProduct().getProductId()));
+		Assert.assertTrue(entityResponseBody.getQuantity().equals(billItem.getQuantity()));
+		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(billItem.getUnitPrice()));
 		
 	}
 
@@ -751,11 +751,11 @@ public class BillItemResourceTest extends BaseResourceTest {
 		BillItemResponseBody entityResponseBody = gson.fromJson(responseBody,
 				BillItemResponseBody.class);
 		
-		Assert.assertEquals(Long.compare(entityResponseBody.getBillItemId(), billItem.getBillItemId()),0);
-		Assert.assertEquals(Long.compare(entityResponseBody.getBillId(), entityRequestBody.getBillId()),0);
-		Assert.assertEquals(Long.compare(entityResponseBody.getProductId(), entityRequestBody.getProductId()),0);
-		Assert.assertEquals(Double.compare(entityResponseBody.getQuantity(), entityRequestBody.getQuantity()),0);
-		Assert.assertEquals(Double.compare(entityResponseBody.getUnitPrice(), product.getPrice()),0);
+		Assert.assertTrue(entityResponseBody.getBillItemId().equals(billItem.getBillItemId()));
+		Assert.assertTrue(entityResponseBody.getBillId().equals(entityRequestBody.getBillId()));
+		Assert.assertTrue(entityResponseBody.getProductId().equals(entityRequestBody.getProductId()));
+		Assert.assertTrue(entityResponseBody.getQuantity().equals(entityRequestBody.getQuantity()));
+		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(product.getPrice()));
 		
 		billItemDAO.delete(billItem);
 		billItem = null;

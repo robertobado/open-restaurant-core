@@ -40,7 +40,7 @@ public class ConsumptionIdentifierResponseBody {
 	    if (!(other instanceof ConsumptionIdentifierResponseBody)) return false;
 	    ConsumptionIdentifierResponseBody otherEntityBody = (ConsumptionIdentifierResponseBody)other;
 	    
-	    if(otherEntityBody.getConsumptionIdentifierId() != this.getConsumptionIdentifierId()){
+	    if(null == otherEntityBody.getConsumptionIdentifierId() || !otherEntityBody.getConsumptionIdentifierId().equals(this.getConsumptionIdentifierId())){
 	    	return false;
 	    }
 	    if(!StringUtils.equals(otherEntityBody.getIdentifier(), this.getIdentifier())){

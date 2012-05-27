@@ -89,8 +89,7 @@ public class BillResource extends BaseResource {
 		ConsumptionIdentifier consumptionIdentifier = consumptionIdentifierDAO
 				.get(entityRequestBody.getConsumptionIdentifierId());
 
-		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!consumptionIdentifier.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -135,6 +134,7 @@ public class BillResource extends BaseResource {
 
 		try {
 			billDAO.save(bill);
+			billDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -179,8 +179,7 @@ public class BillResource extends BaseResource {
 				throw new NotFoundException("Invalid consumptionIdentifierId");
 			}
 
-			if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
-					user.getCompany().getCompanyId()) != 0) {
+			if (!consumptionIdentifier.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 				throw new ForbiddenException();
 			}
 		}
@@ -248,8 +247,8 @@ public class BillResource extends BaseResource {
 
 		Bill bill = retrieveEntity(entityIdString);
 
-		if (Long.compare(bill.getConsumptionIdentifier().getCompany()
-				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+		if (!bill.getConsumptionIdentifier().getCompany()
+				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -272,8 +271,8 @@ public class BillResource extends BaseResource {
 
 		Bill bill = retrieveEntity(entityIdString);
 
-		if (Long.compare(bill.getConsumptionIdentifier().getCompany()
-				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+		if (!bill.getConsumptionIdentifier().getCompany()
+				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -303,8 +302,8 @@ public class BillResource extends BaseResource {
 
 		Bill bill = retrieveEntity(entityIdString);
 
-		if (Long.compare(bill.getConsumptionIdentifier().getCompany()
-				.getCompanyId(), user.getCompany().getCompanyId()) != 0) {
+		if (!bill.getConsumptionIdentifier().getCompany()
+				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -312,9 +311,9 @@ public class BillResource extends BaseResource {
 		
 		validateStatusValue(entityRequestBody.getStatus());
 
-		if (Long.compare(bill.getConsumptionIdentifier()
-				.getConsumptionIdentifierId(), entityRequestBody
-				.getConsumptionIdentifierId()) != 0) {
+		if (!bill.getConsumptionIdentifier()
+				.getConsumptionIdentifierId().equals(entityRequestBody
+				.getConsumptionIdentifierId())) {
 
 			ConsumptionIdentifier consumptionIdentifier = consumptionIdentifierDAO
 					.get(entityRequestBody.getConsumptionIdentifierId());
@@ -323,8 +322,7 @@ public class BillResource extends BaseResource {
 				throw new NotFoundException("Consumption identifier not found");
 			}
 
-			if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
-					user.getCompany().getCompanyId()) != 0) {
+			if (!consumptionIdentifier.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 				throw new ForbiddenException();
 			}
 

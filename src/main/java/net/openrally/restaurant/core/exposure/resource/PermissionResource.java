@@ -75,8 +75,8 @@ public class PermissionResource extends BaseResource {
 
 		Role role = roleDAO.get(permissionRequestBody.getRoleId());
 
-		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!role.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -102,6 +102,7 @@ public class PermissionResource extends BaseResource {
 
 		try {
 			permissionDAO.save(permission);
+			permissionDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -130,8 +131,8 @@ public class PermissionResource extends BaseResource {
 
 		Role role = retrieveRole(roleIdString);
 
-		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!role.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -167,8 +168,8 @@ public class PermissionResource extends BaseResource {
 
 		Permission permission = retrievePermission(permissionIdString);
 
-		if (Long.compare(permission.getRole().getCompany().getCompanyId(), user
-				.getCompany().getCompanyId()) != 0) {
+		if (!permission.getRole().getCompany().getCompanyId().equals(user
+				.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -193,8 +194,8 @@ public class PermissionResource extends BaseResource {
 
 		Permission permission = retrievePermission(permissionIdString);
 
-		if (Long.compare(permission.getRole().getCompany().getCompanyId(), user
-				.getCompany().getCompanyId()) != 0) {
+		if (!permission.getRole().getCompany().getCompanyId().equals(user
+				.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -224,8 +225,8 @@ public class PermissionResource extends BaseResource {
 
 		Permission permission = retrievePermission(permissionIdString);
 
-		if (Long.compare(permission.getRole().getCompany().getCompanyId(), user
-				.getCompany().getCompanyId()) != 0) {
+		if (!permission.getRole().getCompany().getCompanyId().equals(user
+				.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 

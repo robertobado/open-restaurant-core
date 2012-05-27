@@ -3,6 +3,7 @@ package net.openrally.restaurant.core.aceptance.exposure.resource;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.constraints.AssertTrue;
 import javax.ws.rs.core.Response.Status;
 
 import junit.framework.Assert;

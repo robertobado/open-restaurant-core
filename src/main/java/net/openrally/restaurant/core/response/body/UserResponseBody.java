@@ -61,7 +61,7 @@ public class UserResponseBody {
 		if (!(other instanceof UserResponseBody))
 			return false;
 		UserResponseBody otherRoleResponseBody = (UserResponseBody) other;
-		if (otherRoleResponseBody.getUserId() != this.getUserId()) {
+		if (null == otherRoleResponseBody.getUserId() || !otherRoleResponseBody.getUserId().equals(this.getUserId())) {
 			return false;
 		}
 		if (!StringUtils.equals(otherRoleResponseBody.getLogin(),

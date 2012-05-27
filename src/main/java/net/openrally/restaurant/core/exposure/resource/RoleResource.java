@@ -80,6 +80,7 @@ public class RoleResource extends BaseResource {
 
 		try {
 			roleDAO.save(role);
+			roleDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -146,8 +147,7 @@ public class RoleResource extends BaseResource {
 
 		Role role = retrieveRole(roleIdString);
 
-		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!role.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -175,8 +175,8 @@ public class RoleResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!role.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -212,8 +212,8 @@ public class RoleResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		if (Long.compare(role.getCompany().getCompanyId(), user.getCompany()
-				.getCompanyId()) != 0) {
+		if (!role.getCompany().getCompanyId().equals(user.getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 

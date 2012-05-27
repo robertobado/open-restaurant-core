@@ -96,6 +96,7 @@ public class LoginResource extends BaseResource {
 		loginToken.generateToken();
 
 		loginTokenDAO.save(loginToken);
+		loginTokenDAO.flush();
 
 		LoginResponseBody loginResponseBody = new LoginResponseBody();
 

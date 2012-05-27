@@ -56,7 +56,7 @@ public class BillResponseBody {
 	    if (!(other instanceof BillResponseBody)) return false;
 	    BillResponseBody otherEntityResponseBody = (BillResponseBody)other;
 	    
-	    if(Long.compare(otherEntityResponseBody.getBillId(), this.getBillId()) != 0){
+	    if(null == otherEntityResponseBody.getBillId() || !otherEntityResponseBody.getBillId().equals(this.getBillId())){
 	    	return false;
 	    }
 	    if (otherEntityResponseBody.getOpenTimestamp() == null && this.getOpenTimestamp() != null){
@@ -65,7 +65,7 @@ public class BillResponseBody {
 	    if (this.getOpenTimestamp() == null && otherEntityResponseBody.getOpenTimestamp() != null){
 	    	return false;
 	    }
-	    if((otherEntityResponseBody.getOpenTimestamp() != null && this.getOpenTimestamp() != null) && Long.compare(otherEntityResponseBody.getOpenTimestamp(), this.getOpenTimestamp()) != 0){
+	    if((otherEntityResponseBody.getOpenTimestamp() != null && this.getOpenTimestamp() != null) && !otherEntityResponseBody.getOpenTimestamp().equals(this.getOpenTimestamp())){
 	    	return false;
 	    }
 	    if (otherEntityResponseBody.getCloseTimestamp() == null && this.getCloseTimestamp() != null){
@@ -74,13 +74,13 @@ public class BillResponseBody {
 	    if (this.getCloseTimestamp() == null && otherEntityResponseBody.getCloseTimestamp() != null){
 	    	return false;
 	    }
-	    if((otherEntityResponseBody.getCloseTimestamp() != null && this.getCloseTimestamp() != null) && Long.compare(otherEntityResponseBody.getCloseTimestamp(), this.getCloseTimestamp()) != 0){
+	    if((otherEntityResponseBody.getCloseTimestamp() != null && this.getCloseTimestamp() != null) && !otherEntityResponseBody.getCloseTimestamp().equals(this.getCloseTimestamp())){
 	    	return false;
 	    }
 	    if(!StringUtils.equals(otherEntityResponseBody.getStatus(), this.getStatus())){
 	    	return false;
 	    }
-	    if(Long.compare(otherEntityResponseBody.getConsumptionIdentifierId(),this.getConsumptionIdentifierId()) != 0){
+	    if(null == otherEntityResponseBody.getConsumptionIdentifierId() || !otherEntityResponseBody.getConsumptionIdentifierId().equals(this.getConsumptionIdentifierId())){
 	    	return false;
 	    }
 	    return true;

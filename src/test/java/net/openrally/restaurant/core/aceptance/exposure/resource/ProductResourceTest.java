@@ -380,12 +380,14 @@ public class ProductResourceTest extends BaseResourceTest {
 	public void testGetListCorrectly() throws ClientProtocolException, IOException{
 		
 		Product entity2 = createRandomProductAndPersist(company);
-		
 		Product entity3 = createRandomProductAndPersist(company);	
 		
 		HttpGet httpGet = generateBasicHttpGet(ProductResource.PATH);
 		
 		HttpResponse response = getHttpClient().execute(httpGet);
+		
+		productDAO.delete(entity2);
+		productDAO.delete(entity3);
 
 		Assert.assertEquals(Status.OK.getStatusCode(), response.getStatusLine()
 				.getStatusCode());
@@ -405,8 +407,7 @@ public class ProductResourceTest extends BaseResourceTest {
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody2));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody3));
 		
-		productDAO.delete(entity2);
-		productDAO.delete(entity3);
+		
 	}
 	
 	@Test

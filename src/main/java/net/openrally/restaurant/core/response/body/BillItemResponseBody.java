@@ -54,19 +54,19 @@ public class BillItemResponseBody {
 	    if (!(other instanceof BillItemResponseBody)) return false;
 	    BillItemResponseBody otherEntityResponseBody = (BillItemResponseBody)other;
 	    
-	    if(Long.compare(otherEntityResponseBody.getBillItemId(), this.getBillItemId()) != 0){
+	    if(null == otherEntityResponseBody.getBillItemId() || !otherEntityResponseBody.getBillItemId().equals(this.getBillItemId())){
 	    	return false;
 	    }
-	    if(Long.compare(otherEntityResponseBody.getBillId(), this.getBillId()) != 0){
+	    if(null == otherEntityResponseBody.getBillId() || !otherEntityResponseBody.getBillId().equals(this.getBillId())){
 	    	return false;
 	    }
-	    if(Long.compare(otherEntityResponseBody.getProductId(), this.getProductId()) != 0){
+	    if(null == otherEntityResponseBody.getProductId() || !otherEntityResponseBody.getProductId().equals(this.getProductId())){
 	    	return false;
 	    }
-	    if(Double.compare(otherEntityResponseBody.getQuantity(), this.getQuantity()) != 0){
+	    if(null == otherEntityResponseBody.getQuantity() || !otherEntityResponseBody.getQuantity().equals(this.getQuantity())){
 	    	return false;
 	    }
-	    if(Double.compare(otherEntityResponseBody.getUnitPrice(), this.getUnitPrice()) != 0){
+	    if(null == otherEntityResponseBody.getUnitPrice() || !otherEntityResponseBody.getUnitPrice().equals(this.getUnitPrice())){
 	    	return false;
 	    }
 	    return true;

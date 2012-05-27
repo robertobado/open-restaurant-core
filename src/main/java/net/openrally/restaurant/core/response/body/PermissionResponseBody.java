@@ -97,10 +97,10 @@ public class PermissionResponseBody {
 	    if (!(other instanceof PermissionResponseBody)) return false;
 	    PermissionResponseBody otherRoleResponseBody = (PermissionResponseBody)other;
 	    
-	    if(otherRoleResponseBody.getPermissionId() != this.getPermissionId()){
+	    if(null == otherRoleResponseBody.getPermissionId() || !otherRoleResponseBody.getPermissionId().equals(this.getPermissionId())){
 	    	return false;
 	    }
-	    if(otherRoleResponseBody.getRoleId() != this.getRoleId()){
+	    if(null == otherRoleResponseBody.getRoleId() || !otherRoleResponseBody.getRoleId().equals(this.getRoleId())){
 	    	return false;
 	    }
 	    if(!StringUtils.equals(otherRoleResponseBody.getPath(), this.getPath())){

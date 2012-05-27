@@ -78,6 +78,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		try {
 			consumptionIdentifierDAO.save(consumptionIdentifier);
+			consumptionIdentifierDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
 		}
@@ -136,8 +137,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
 
-		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!consumptionIdentifier.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -162,8 +162,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
 
-		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!consumptionIdentifier.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
@@ -193,8 +192,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 
 		ConsumptionIdentifier consumptionIdentifier = retrieveConsumptionIdentifier(entityIdString);
 
-		if (Long.compare(consumptionIdentifier.getCompany().getCompanyId(),
-				user.getCompany().getCompanyId()) != 0) {
+		if (!consumptionIdentifier.getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 

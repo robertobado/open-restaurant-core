@@ -39,6 +39,7 @@ public class ProductResponseBody {
 	public Double getPrice() {
 		return price;
 	}
+	
 	public void setPrice(Double price) {
 		this.price = price;
 	}
@@ -48,8 +49,8 @@ public class ProductResponseBody {
 	    if (other == this) return true;
 	    if (!(other instanceof ProductResponseBody)) return false;
 	    ProductResponseBody otherEntityBody = (ProductResponseBody)other;
-	    
-	    if(otherEntityBody.getProductId() != this.getProductId()){
+	   
+	    if(null == otherEntityBody.getProductId() || !otherEntityBody.getProductId().equals(this.getProductId())){
 	    	return false;
 	    }
 	    if(!StringUtils.equals(otherEntityBody.getName(), this.getName())){
@@ -58,7 +59,7 @@ public class ProductResponseBody {
 	    if(!StringUtils.equals(otherEntityBody.getDescription(), this.getDescription())){
 	    	return false;
 	    }
-	    if(!(Double.compare(otherEntityBody.getPrice(), this.getPrice()) == 0)){
+	    if(null == otherEntityBody.getPrice() || !otherEntityBody.getPrice().equals(this.getPrice())){
 	    	return false;
 	    }
 	    return true;

@@ -19,7 +19,7 @@ import javax.persistence.UniqueConstraint;
 import net.openrally.restaurant.core.utils.HashCalculator;
 
 @Entity
-@Table(name = "User", uniqueConstraints = {@UniqueConstraint(columnNames={"companyId", "login"})})
+@Table(name = "`user`", uniqueConstraints = {@UniqueConstraint(columnNames={"companyId", "login"})})
 public class User implements Serializable {
 
 	private static final String SLASH = "/";
