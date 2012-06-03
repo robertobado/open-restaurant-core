@@ -16,10 +16,10 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.BillRequestBody;
-import net.openrally.restaurant.core.response.body.BillListResponseBody;
-import net.openrally.restaurant.core.response.body.BillResponseBody;
 import net.openrally.restaurant.core.util.StringUtilities;
+import net.openrally.restaurant.request.body.BillRequestBody;
+import net.openrally.restaurant.response.body.BillListResponseBody;
+import net.openrally.restaurant.response.body.BillResponseBody;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;

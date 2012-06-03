@@ -19,11 +19,11 @@ import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.BillItemRequestBody;
-import net.openrally.restaurant.core.response.body.BillItemListResponseBody;
-import net.openrally.restaurant.core.response.body.BillItemResponseBody;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
+import net.openrally.restaurant.request.body.BillItemRequestBody;
+import net.openrally.restaurant.response.body.BillItemListResponseBody;
+import net.openrally.restaurant.response.body.BillItemResponseBody;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;

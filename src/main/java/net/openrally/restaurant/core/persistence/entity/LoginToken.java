@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "LoginToken", uniqueConstraints = {@UniqueConstraint(columnNames={"token"})})
+@Table(name = "login_token", uniqueConstraints = {@UniqueConstraint(columnNames={"token"})})
 public class LoginToken implements Serializable{
 
 	private static final long serialVersionUID = -5506103645468557836L;

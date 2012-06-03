@@ -25,9 +25,9 @@ import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
 import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.ConsumptionIdentifierRequestBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierListResponseBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierResponseBody;
+import net.openrally.restaurant.request.body.ConsumptionIdentifierRequestBody;
+import net.openrally.restaurant.response.body.ConsumptionIdentifierListResponseBody;
+import net.openrally.restaurant.response.body.ConsumptionIdentifierResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;

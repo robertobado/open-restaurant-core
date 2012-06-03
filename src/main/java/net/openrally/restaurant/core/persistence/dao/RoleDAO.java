@@ -20,7 +20,7 @@ public class RoleDAO extends AbstractHibernateDAO<Role, Long> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Role> getAllByCompanyId(Long companyId) {
+	public List<Role> listAllByCompanyId(Long companyId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("from "
 				+ domainClass.getSimpleName() + " where companyId = :companyId ");

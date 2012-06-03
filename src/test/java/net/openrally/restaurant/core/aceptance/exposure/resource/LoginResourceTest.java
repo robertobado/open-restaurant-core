@@ -10,10 +10,10 @@ import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.LoginRequestBody;
-import net.openrally.restaurant.core.response.body.LoginResponseBody;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
+import net.openrally.restaurant.request.body.LoginRequestBody;
+import net.openrally.restaurant.response.body.LoginResponseBody;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;

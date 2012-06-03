@@ -3,7 +3,6 @@ package net.openrally.restaurant.core.aceptance.exposure.resource;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.constraints.AssertTrue;
 import javax.ws.rs.core.Response.Status;
 
 import junit.framework.Assert;
@@ -15,10 +14,10 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.PermissionRequestBody;
-import net.openrally.restaurant.core.response.body.PermissionListResponseBody;
-import net.openrally.restaurant.core.response.body.PermissionResponseBody;
 import net.openrally.restaurant.core.util.StringUtilities;
+import net.openrally.restaurant.request.body.PermissionRequestBody;
+import net.openrally.restaurant.response.body.PermissionListResponseBody;
+import net.openrally.restaurant.response.body.PermissionResponseBody;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;

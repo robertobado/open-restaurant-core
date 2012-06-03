@@ -15,11 +15,11 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.ConsumptionIdentifierRequestBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierListResponseBody;
-import net.openrally.restaurant.core.response.body.ConsumptionIdentifierResponseBody;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
+import net.openrally.restaurant.request.body.ConsumptionIdentifierRequestBody;
+import net.openrally.restaurant.response.body.ConsumptionIdentifierListResponseBody;
+import net.openrally.restaurant.response.body.ConsumptionIdentifierResponseBody;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;

@@ -48,6 +48,20 @@ public class UserDAO extends AbstractHibernateDAO<User, Long>{
 			throw new InternalServerErrorException();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> listAllByCompanyId(Long companyId) {
+		
+		if(logger.isDebugEnabled()){
+			logger.debug(String.format("Querying users for companyId = [%d] ", companyId));
+		}
+		
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("from " + getDomainClass().getSimpleName()
+				+ " where companyId = :companyId");
+		query.setParameter("companyId", companyId);
+		return query.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<User> getAllByCompanyId(Long companyId) {
@@ -56,5 +70,13 @@ public class UserDAO extends AbstractHibernateDAO<User, Long>{
 				+ domainClass.getSimpleName() + " where companyId = :companyId ");
 		query.setParameter("companyId", companyId);
 	    return query.list();
+	}
+	
+	@Override
+	public void delete(User t) {
+		Session session = sessionFactory.getCurrentSession();
+		t.setRoles(null);
+		session.update(t);
+		session.delete(t);
 	}
 }

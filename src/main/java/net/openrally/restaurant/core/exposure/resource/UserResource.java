@@ -30,9 +30,9 @@ import net.openrally.restaurant.core.persistence.dao.UserDAO;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.UserRequestBody;
-import net.openrally.restaurant.core.response.body.UserListResponseBody;
-import net.openrally.restaurant.core.response.body.UserResponseBody;
+import net.openrally.restaurant.request.body.UserRequestBody;
+import net.openrally.restaurant.response.body.UserListResponseBody;
+import net.openrally.restaurant.response.body.UserResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;

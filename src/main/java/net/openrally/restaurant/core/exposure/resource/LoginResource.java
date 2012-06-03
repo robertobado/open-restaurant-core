@@ -14,8 +14,8 @@ import net.openrally.restaurant.core.persistence.dao.UserDAO;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.LoginRequestBody;
-import net.openrally.restaurant.core.response.body.LoginResponseBody;
+import net.openrally.restaurant.request.body.LoginRequestBody;
+import net.openrally.restaurant.response.body.LoginResponseBody;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

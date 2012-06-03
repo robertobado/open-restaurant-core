@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import net.openrally.restaurant.core.utils.HashCalculator;
+import net.openrally.restaurant.core.util.HashCalculator;
 
 @Entity
 @Table(name = "`user`", uniqueConstraints = {@UniqueConstraint(columnNames={"companyId", "login"})})
@@ -42,7 +42,7 @@ public class User implements Serializable {
 	private String passwordHash;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "UserRole", joinColumns = { 
+	@JoinTable(name = "user_role", joinColumns = { 
 			@JoinColumn(name = "userId", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "roleId", 
 					nullable = false, updatable = false) })

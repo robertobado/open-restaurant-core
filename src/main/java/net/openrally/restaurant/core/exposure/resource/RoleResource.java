@@ -25,9 +25,9 @@ import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
-import net.openrally.restaurant.core.request.body.RoleRequestBody;
-import net.openrally.restaurant.core.response.body.RoleListResponseBody;
-import net.openrally.restaurant.core.response.body.RoleResponseBody;
+import net.openrally.restaurant.request.body.RoleRequestBody;
+import net.openrally.restaurant.response.body.RoleListResponseBody;
+import net.openrally.restaurant.response.body.RoleResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
@@ -112,7 +112,7 @@ public class RoleResource extends BaseResource {
 
 		User user = getRequestUser(loginToken);
 
-		List<Role> roleList = roleDAO.getAllByCompanyId(user.getCompany()
+		List<Role> roleList = roleDAO.listAllByCompanyId(user.getCompany()
 				.getCompanyId());
 
 		List<RoleResponseBody> responseRoleList = new LinkedList<RoleResponseBody>();

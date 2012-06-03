@@ -33,8 +33,8 @@ import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
+import net.openrally.restaurant.core.util.HashCalculator;
 import net.openrally.restaurant.core.util.RandomGenerator;
-import net.openrally.restaurant.core.utils.HashCalculator;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
