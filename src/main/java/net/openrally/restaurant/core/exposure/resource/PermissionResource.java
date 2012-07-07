@@ -29,7 +29,6 @@ import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.PermissionRequestBody;
-import net.openrally.restaurant.response.body.PermissionListResponseBody;
 import net.openrally.restaurant.response.body.PermissionResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -147,11 +146,7 @@ public class PermissionResource extends BaseResource {
 			permissionResponseList.add(permissionResponseBody);
 		}
 
-		PermissionListResponseBody permissionListResponseBody = new PermissionListResponseBody();
-
-		permissionListResponseBody.setList(permissionResponseList);
-
-		return Response.ok(gson.toJson(permissionListResponseBody)).build();
+		return Response.ok(gson.toJson(permissionResponseList)).build();
 	}
 
 	@GET

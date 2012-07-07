@@ -26,7 +26,6 @@ import net.openrally.restaurant.core.persistence.dao.ProductDAO;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.ProductRequestBody;
-import net.openrally.restaurant.response.body.ProductListResponseBody;
 import net.openrally.restaurant.response.body.ProductResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -115,11 +114,7 @@ public class ProductResource extends BaseResource {
 			entityResponseBodyList.add(entityResponseBody);
 		}
 
-		ProductListResponseBody entityListResponseBody = new ProductListResponseBody();
-
-		entityListResponseBody.setList(entityResponseBodyList);
-
-		return Response.ok(gson.toJson(entityListResponseBody)).build();
+		return Response.ok(gson.toJson(entityResponseBodyList)).build();
 	}
 
 	@GET

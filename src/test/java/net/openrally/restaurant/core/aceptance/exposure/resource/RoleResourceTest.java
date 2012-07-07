@@ -1,6 +1,7 @@
 package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -16,7 +17,6 @@ import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.StringUtilities;
 import net.openrally.restaurant.request.body.RoleRequestBody;
-import net.openrally.restaurant.response.body.RoleListResponseBody;
 import net.openrally.restaurant.response.body.RoleResponseBody;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.google.gson.reflect.TypeToken;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
@@ -326,19 +328,19 @@ public class RoleResourceTest extends BaseResourceTest {
 				.getStatusCode());
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
-
-		RoleListResponseBody roleResponseBody = gson.fromJson(responseBody,
-				RoleListResponseBody.class);
+		
+		Type listType = new TypeToken<List<RoleResponseBody>>() {}.getType();
+		
+		List<RoleResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 		
 		RoleResponseBody roleResponseBody1 = new RoleResponseBody(testRole);
 		RoleResponseBody roleResponseBody2 = new RoleResponseBody(role2);
 		RoleResponseBody roleResponseBody3 = new RoleResponseBody(role3);
-		
-		List<RoleResponseBody> list = roleResponseBody.getList();
 
-		Assert.assertTrue(list.contains(roleResponseBody1));
-		Assert.assertTrue(list.contains(roleResponseBody2));
-		Assert.assertTrue(list.contains(roleResponseBody3));
+		Assert.assertTrue(entityResponseBodyList.contains(roleResponseBody1));
+		Assert.assertTrue(entityResponseBodyList.contains(roleResponseBody2));
+		Assert.assertTrue(entityResponseBodyList.contains(roleResponseBody3));
 		
 		roleDAO.delete(role2);
 		roleDAO.delete(role3);

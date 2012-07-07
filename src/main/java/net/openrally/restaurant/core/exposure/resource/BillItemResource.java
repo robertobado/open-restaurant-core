@@ -31,7 +31,6 @@ import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.BillItemRequestBody;
-import net.openrally.restaurant.response.body.BillItemListResponseBody;
 import net.openrally.restaurant.response.body.BillItemResponseBody;
 
 import org.apache.commons.lang.StringUtils;
@@ -188,11 +187,7 @@ public class BillItemResource extends BaseResource {
 			entityResponseBodyList.add(entityResponseBody);
 		}
 
-		BillItemListResponseBody entityListResponseBody = new BillItemListResponseBody();
-
-		entityListResponseBody.setList(entityResponseBodyList);
-
-		return Response.ok(gson.toJson(entityListResponseBody)).build();
+		return Response.ok(gson.toJson(entityResponseBodyList)).build();
 	}
 	
 	@PUT

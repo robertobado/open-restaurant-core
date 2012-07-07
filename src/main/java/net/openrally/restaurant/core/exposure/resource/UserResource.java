@@ -31,7 +31,6 @@ import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.UserRequestBody;
-import net.openrally.restaurant.response.body.UserListResponseBody;
 import net.openrally.restaurant.response.body.UserResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -141,10 +140,7 @@ public class UserResource extends BaseResource {
 			responseUserList.add(userResponseBody);
 		}
 
-		UserListResponseBody roleListResponseBody = new UserListResponseBody();
-		roleListResponseBody.setList(responseUserList);
-
-		return Response.ok(gson.toJson(roleListResponseBody)).build();
+		return Response.ok(gson.toJson(responseUserList)).build();
 	}
 
 	@GET

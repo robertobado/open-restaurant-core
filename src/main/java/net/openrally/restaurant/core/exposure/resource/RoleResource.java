@@ -26,7 +26,6 @@ import net.openrally.restaurant.core.persistence.dao.RoleDAO;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.RoleRequestBody;
-import net.openrally.restaurant.response.body.RoleListResponseBody;
 import net.openrally.restaurant.response.body.RoleResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -122,10 +121,7 @@ public class RoleResource extends BaseResource {
 			responseRoleList.add(roleResponseBody);
 		}
 
-		RoleListResponseBody roleListResponseBody = new RoleListResponseBody();
-		roleListResponseBody.setList(responseRoleList);
-
-		return Response.ok(gson.toJson(roleListResponseBody)).build();
+		return Response.ok(gson.toJson(responseRoleList)).build();
 
 	}
 

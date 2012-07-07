@@ -1,6 +1,7 @@
 package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -22,7 +23,6 @@ import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
 import net.openrally.restaurant.request.body.BillItemRequestBody;
-import net.openrally.restaurant.response.body.BillItemListResponseBody;
 import net.openrally.restaurant.response.body.BillItemResponseBody;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,6 +40,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.google.gson.reflect.TypeToken;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
@@ -521,8 +523,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillItemListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillItemListResponseBody.class);
+		Type listType = new TypeToken<List<BillItemResponseBody>>() {}.getType();
+		
+		List<BillItemResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillItemResponseBody entityResponseBody = new BillItemResponseBody(
 				billItem);
@@ -534,9 +538,6 @@ public class BillItemResourceTest extends BaseResourceTest {
 				billItem4);
 		BillItemResponseBody entityResponseBody4 = new BillItemResponseBody(
 				billItem5);
-
-		List<BillItemResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 5);
 		

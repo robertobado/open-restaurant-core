@@ -1,6 +1,7 @@
 package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -16,7 +17,6 @@ import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.StringUtilities;
 import net.openrally.restaurant.request.body.PermissionRequestBody;
-import net.openrally.restaurant.response.body.PermissionListResponseBody;
 import net.openrally.restaurant.response.body.PermissionResponseBody;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,6 +34,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.google.gson.reflect.TypeToken;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
@@ -402,18 +404,18 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		PermissionListResponseBody permissionResponseBody = gson.fromJson(responseBody,
-				PermissionListResponseBody.class);
+		Type listType = new TypeToken<List<PermissionResponseBody>>() {}.getType();
+		
+		List<PermissionResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 		
 		PermissionResponseBody permissionResponseBody1 = new PermissionResponseBody(testPermission);
 		PermissionResponseBody permissionResponseBody2 = new PermissionResponseBody(permission2);
 		PermissionResponseBody permissionResponseBody3 = new PermissionResponseBody(permission3);
 		
-		List<PermissionResponseBody> permissionsList = permissionResponseBody.getList();
-		
-		Assert.assertTrue(permissionsList.contains(permissionResponseBody1));
-		Assert.assertTrue(permissionsList.contains(permissionResponseBody2));
-		Assert.assertTrue(permissionsList.contains(permissionResponseBody3));
+		Assert.assertTrue(entityResponseBodyList.contains(permissionResponseBody1));
+		Assert.assertTrue(entityResponseBodyList.contains(permissionResponseBody2));
+		Assert.assertTrue(entityResponseBodyList.contains(permissionResponseBody3));
 		
 		permissionDAO.delete(permission3);
 		permissionDAO.delete(permission2);

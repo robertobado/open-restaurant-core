@@ -1,6 +1,7 @@
 package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -18,7 +19,7 @@ import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.StringUtilities;
 import net.openrally.restaurant.request.body.BillRequestBody;
-import net.openrally.restaurant.response.body.BillListResponseBody;
+import net.openrally.restaurant.response.body.BillItemResponseBody;
 import net.openrally.restaurant.response.body.BillResponseBody;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +37,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.google.gson.reflect.TypeToken;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
@@ -516,8 +519,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -529,9 +534,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 5);
 		
@@ -580,8 +582,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -593,9 +597,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 5);
 		
@@ -620,8 +621,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -633,9 +636,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 3);
 		
@@ -660,8 +660,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -673,9 +675,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 2);
 		
@@ -699,9 +698,11 @@ public class BillResourceTest extends BaseResourceTest {
 				.getStatusCode());
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
-
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		
+		Type listType = new TypeToken<List<BillItemResponseBody>>() {}.getType();
+		
+		List<BillItemResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -713,9 +714,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 0);
 		
@@ -740,8 +738,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -753,9 +753,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 1);
 		
@@ -780,8 +777,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -793,9 +792,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 2);
 		
@@ -820,8 +816,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -833,9 +831,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 2);
 		
@@ -860,8 +855,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -873,9 +870,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 4);
 		
@@ -900,8 +894,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -913,9 +909,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 4);
 		
@@ -940,8 +933,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -953,9 +948,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 1);
 		
@@ -980,8 +972,10 @@ public class BillResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		BillListResponseBody entityListResponseBody = gson.fromJson(
-				responseBody, BillListResponseBody.class);
+		Type listType = new TypeToken<List<BillResponseBody>>() {}.getType();
+		
+		List<BillResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
 
 		BillResponseBody entityResponseBody = new BillResponseBody(
 				bill);
@@ -993,9 +987,6 @@ public class BillResourceTest extends BaseResourceTest {
 				bill3);
 		BillResponseBody entityResponseBody4 = new BillResponseBody(
 				bill4);
-
-		List<BillResponseBody> entityResponseBodyList = entityListResponseBody
-				.getList();
 		
 		Assert.assertEquals(entityResponseBodyList.size(), 1);
 		

@@ -26,7 +26,6 @@ import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
 import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.ConsumptionIdentifierRequestBody;
-import net.openrally.restaurant.response.body.ConsumptionIdentifierListResponseBody;
 import net.openrally.restaurant.response.body.ConsumptionIdentifierResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -116,11 +115,7 @@ public class ConsumptionIdentifierResource extends BaseResource {
 			entityResponseBodyList.add(entityResponseBody);
 		}
 
-		ConsumptionIdentifierListResponseBody entityListResponseBody = new ConsumptionIdentifierListResponseBody();
-
-		entityListResponseBody.setList(entityResponseBodyList);
-
-		return Response.ok(gson.toJson(entityListResponseBody)).build();
+		return Response.ok(gson.toJson(entityResponseBodyList)).build();
 	}
 
 	@GET
