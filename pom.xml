@@ -240,7 +240,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>open-restaurant-core</finalName>
+		<finalName>restaurant-core</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>

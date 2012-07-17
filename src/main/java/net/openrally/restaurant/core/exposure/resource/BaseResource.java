@@ -3,6 +3,7 @@ package net.openrally.restaurant.core.exposure.resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 
+import net.openrally.restaurant.core.exception.BadRequestException;
 import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.LoginTokenDAO;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
@@ -69,5 +70,16 @@ public abstract class BaseResource {
 	public static final String getServerBasePath() {
 		return HTTP + COLON + SLASH + SLASH + SERVER_HOSTNAME + COLON
 				+ PORT_NUMBER + SLASH + CONTEXT_PATH;
+	}
+	
+	protected Long tryLongFilterCast(String filterValueString)
+			throws BadRequestException {
+		try {
+			return Long.parseLong(filterValueString);
+		} catch (NumberFormatException e) {
+			logger.debug("Malformed Long filter parameter value: "
+					+ filterValueString);
+			throw new BadRequestException("Invalid filter value");
+		}
 	}
 }

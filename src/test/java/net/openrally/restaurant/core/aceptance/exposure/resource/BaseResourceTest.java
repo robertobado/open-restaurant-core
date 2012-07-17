@@ -22,6 +22,7 @@ import net.openrally.restaurant.core.persistence.dao.LoginTokenDAO;
 import net.openrally.restaurant.core.persistence.dao.PermissionDAO;
 import net.openrally.restaurant.core.persistence.dao.ProductDAO;
 import net.openrally.restaurant.core.persistence.dao.RoleDAO;
+import net.openrally.restaurant.core.persistence.dao.TaxDAO;
 import net.openrally.restaurant.core.persistence.dao.UserDAO;
 import net.openrally.restaurant.core.persistence.entity.Bill;
 import net.openrally.restaurant.core.persistence.entity.BillItem;
@@ -32,6 +33,7 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.Role;
+import net.openrally.restaurant.core.persistence.entity.Tax;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.HashCalculator;
 import net.openrally.restaurant.core.util.RandomGenerator;
@@ -94,6 +96,9 @@ public class BaseResourceTest {
 	
 	@Autowired
 	protected BillItemDAO billItemDAO;
+	
+	@Autowired
+	protected TaxDAO taxDAO;
 
 	protected String authorizedToken;
 
@@ -598,4 +603,18 @@ public class BaseResourceTest {
 		billItemDAO.save(billItem);
 		return billItem;
 	}	
+	
+	protected Tax createRandomTaxAndPersist(Company company){
+		Tax tax = new Tax();
+		
+		tax.setCompany(company);
+		tax.setName(RandomGenerator.generateString(20));
+		tax.setDescription(RandomGenerator.generateString(200));
+		tax.setAmount(RandomGenerator.randomDouble(2));
+		tax.setPercentage(RandomGenerator.randomBoolean());
+		
+		taxDAO.save(tax);
+		
+		return tax;
+	}
 }

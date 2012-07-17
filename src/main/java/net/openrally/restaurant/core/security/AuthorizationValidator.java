@@ -42,7 +42,11 @@ public class AuthorizationValidator {
 
 	public void validateAccess(String loginTokenString, String path,
 			String method) throws ForbiddenException, UnauthorizedException {
-		// Login is the only resource accessible without a login token
+		if(path.startsWith("/")){
+			path = path.replaceFirst("/", "");
+		}
+		
+		// Login and company are the only resource accessible without a login token
 		if (!path.equals("login") && !path.equals("company")) {
 
 			if (null == loginTokenString

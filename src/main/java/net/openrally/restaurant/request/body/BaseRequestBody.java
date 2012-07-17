@@ -56,6 +56,13 @@ public class BaseRequestBody {
 							throw new BadRequestException("Parameter "
 									+ field.getName() + " missing or blank");
 						}
+					} else if (field.getType() == Boolean.class || field.getType() == boolean.class){
+						Boolean fieldValue = (Boolean) field.get(this);
+
+						if (fieldValue == null) {
+							throw new BadRequestException("Parameter "
+									+ field.getName() + " missing or blank");
+						}
 					}
 					else{
 						logger.error("Unkown request body validation policy. Class " + this.getClass().getSimpleName() + ", field name " + field.getName() + ", field type " + field.getType().getSimpleName() + ", annotation ParameterRequired");

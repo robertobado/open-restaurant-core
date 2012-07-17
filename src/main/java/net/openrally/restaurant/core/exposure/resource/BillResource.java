@@ -419,17 +419,6 @@ public class BillResource extends BaseResource {
 		return entityRequestBody;
 	}
 
-	private Long tryLongFilterCast(String filterValueString)
-			throws BadRequestException {
-		try {
-			return Long.parseLong(filterValueString);
-		} catch (NumberFormatException e) {
-			logger.debug("Malformed Long filter parameter value: "
-					+ filterValueString);
-			throw new BadRequestException("Invalid filter value");
-		}
-	}
-
 	private void validateStatusValue(String statusValue)
 			throws BadRequestException {
 		Status[] statusArray = Status.values();
