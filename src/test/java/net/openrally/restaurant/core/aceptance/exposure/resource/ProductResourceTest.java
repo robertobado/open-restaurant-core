@@ -9,8 +9,11 @@ import javax.ws.rs.core.Response.Status;
 import junit.framework.Assert;
 import net.openrally.restaurant.core.exposure.resource.BaseResource;
 import net.openrally.restaurant.core.exposure.resource.ProductResource;
+import net.openrally.restaurant.core.persistence.entity.Bill;
+import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
+import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Product;
@@ -635,6 +638,31 @@ public class ProductResourceTest extends BaseResourceTest {
 		userDAO.delete(user);
 		configurationDAO.delete(configuration);
 		companyDAO.delete(company);
+	}
+	
+	@Test
+	public void testDeleteProductAssociatedWithBillItem() throws ClientProtocolException, IOException{
+		ConsumptionIdentifier consumptionIdentifier = createRandomConsumptionIdentifierAndPersist(company);
+		Bill bill = createOpenBillAndPersist(consumptionIdentifier);
+		BillItem billItem = new BillItem();
+		billItem.setBill(bill);
+		billItem.setQuantity(3.0);
+		billItem.setReferenceId(product.getProductId());
+		billItem.setUnitPrice(product.getPrice());
+		billItem.setType(BillItem.Type.PRODUCT.toString());
+		billItemDAO.save(billItem);
+		
+		HttpDelete httpDelete = generateBasicHttpDelete(ProductResource.PATH
+				+ BaseResource.SLASH + product.getProductId());
+
+		HttpResponse response = getHttpClient().execute(httpDelete);
+
+		Assert.assertEquals(Status.CONFLICT.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+		
+		billItemDAO.delete(billItem);
+		billDAO.delete(bill);
+		consumptionIdentifierDAO.delete(consumptionIdentifier);
 	}
 	
 	// Utilitary functions

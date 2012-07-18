@@ -22,7 +22,9 @@ import net.openrally.restaurant.core.exception.ConflictException;
 import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
 import net.openrally.restaurant.core.exception.UnauthorizedException;
+import net.openrally.restaurant.core.persistence.dao.BillItemDAO;
 import net.openrally.restaurant.core.persistence.dao.TaxDAO;
+import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.Tax;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.TaxRequestBody;
@@ -49,6 +51,9 @@ public class TaxResource extends BaseResource {
 	
 	@Autowired
 	private TaxDAO taxDAO;
+	
+	@Autowired
+	private BillItemDAO billItemDAO;
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -158,6 +163,11 @@ public class TaxResource extends BaseResource {
 				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
+		
+		if(areThereLinkedEntities(entity)){
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+		}
 
 		try {
 			taxDAO.delete(entity);
@@ -258,5 +268,10 @@ public class TaxResource extends BaseResource {
 		}
 
 		return entity;
+	}
+	
+	private boolean areThereLinkedEntities(Tax tax) {
+		List<BillItem> allByReferenceIdAndType = billItemDAO.getAllByReferenceIdAndType(tax.getTaxId(), BillItem.Type.TAX.toString());
+		return !allByReferenceIdAndType.isEmpty();
 	}
 }

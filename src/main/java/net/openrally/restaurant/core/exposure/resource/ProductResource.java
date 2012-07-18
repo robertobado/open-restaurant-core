@@ -22,7 +22,9 @@ import net.openrally.restaurant.core.exception.ConflictException;
 import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
 import net.openrally.restaurant.core.exception.UnauthorizedException;
+import net.openrally.restaurant.core.persistence.dao.BillItemDAO;
 import net.openrally.restaurant.core.persistence.dao.ProductDAO;
+import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.ProductRequestBody;
@@ -47,6 +49,9 @@ public class ProductResource extends BaseResource {
 
 	@Autowired
 	private ProductDAO productDAO;
+	
+	@Autowired
+	private BillItemDAO billItemDAO;
 
 	public static final String PATH = "product";
 
@@ -160,6 +165,11 @@ public class ProductResource extends BaseResource {
 				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
+		
+		if(areThereLinkedEntities(product)){
+			throw new ConflictException(
+					MSG_ENTITY_IS_ASSOCIATED_WITH_OTHER_ENTITIES);
+		}
 
 		try {
 			productDAO.delete(product);
@@ -256,6 +266,11 @@ public class ProductResource extends BaseResource {
 		productRequestBody.validate();
 
 		return productRequestBody;
+	}
+	
+	private boolean areThereLinkedEntities(Product product) {
+		List<BillItem> allByReferenceIdAndType = billItemDAO.getAllByReferenceIdAndType(product.getProductId(), BillItem.Type.PRODUCT.toString());
+		return !allByReferenceIdAndType.isEmpty();
 	}
 
 }

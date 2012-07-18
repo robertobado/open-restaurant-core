@@ -2,7 +2,6 @@ package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -20,7 +19,6 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.Role;
-import net.openrally.restaurant.core.persistence.entity.Tax;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
@@ -48,7 +46,7 @@ import com.google.gson.reflect.TypeToken;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
 public class BillItemResourceTest extends BaseResourceTest {
-	
+
 	private Company company;
 	private Configuration configuration;
 	private User user;
@@ -63,7 +61,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 	public BillItemResourceTest() throws Exception {
 		super();
 	}
-	
+
 	@Before
 	public void setupEntities() {
 		company = createCompanyAndPersist();
@@ -79,16 +77,16 @@ public class BillItemResourceTest extends BaseResourceTest {
 		product = createRandomProductAndPersist(company);
 		billItem = createRandomProductBillItemAndPersist(bill, product);
 	}
-	
+
 	@After
 	public void tearDownEntities() {
 
 		if (null != billItem) {
 			billItemDAO.delete(billItem);
 		}
-		
+
 		productDAO.delete(product);
-		
+
 		billDAO.delete(bill);
 
 		consumptionIdentifierDAO.delete(consumptionIdentifier);
@@ -104,7 +102,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		configurationDAO.delete(configuration);
 		companyDAO.delete(company);
 	}
-	
+
 	@Test
 	public void testWrongContentTypePost() throws ClientProtocolException,
 			IOException {
@@ -178,10 +176,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 			IOException {
 		testWrongAcceptTypeDelete(BillItemResource.PATH);
 	}
-	
+
 	@Test
-	public void testPostMissingBillId()
-			throws ClientProtocolException, IOException {
+	public void testPostMissingBillId() throws ClientProtocolException,
+			IOException {
 		HttpPost httpPost = generateBasicHttpPost(BillItemResource.PATH);
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
@@ -197,10 +195,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
-	public void testPostMissingReferenceId()
-			throws ClientProtocolException, IOException {
+	public void testPostMissingReferenceId() throws ClientProtocolException,
+			IOException {
 		HttpPost httpPost = generateBasicHttpPost(BillItemResource.PATH);
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
@@ -216,10 +214,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
-	public void testPostNegativeQuantity()
-			throws ClientProtocolException, IOException {
+	public void testPostNegativeQuantity() throws ClientProtocolException,
+			IOException {
 		HttpPost httpPost = generateBasicHttpPost(BillItemResource.PATH);
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
@@ -254,14 +252,14 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
-	public void testPostOnClosedBill()
-			throws ClientProtocolException, IOException {
-		
+	public void testPostOnClosedBill() throws ClientProtocolException,
+			IOException {
+
 		bill.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(bill);
-		
+
 		HttpPost httpPost = generateBasicHttpPost(BillItemResource.PATH);
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
@@ -305,7 +303,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		deleteEntityBasedOnLocation(location, billItemDAO);
 
 	}
-	
+
 	@Test
 	public void testPostDuplicateEntity() throws ClientProtocolException,
 			IOException {
@@ -352,7 +350,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		deleteEntityBasedOnLocation(location1, billItemDAO);
 		deleteEntityBasedOnLocation(location2, billItemDAO);
 	}
-	
+
 	@Test
 	public void postBillItemOnOtherCompanysBill()
 			throws ClientProtocolException, IOException {
@@ -383,7 +381,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		companyDAO.delete(company);
 
 	}
-	
+
 	@Test
 	public void testGetInvalidEntity() throws ClientProtocolException,
 			IOException {
@@ -425,12 +423,17 @@ public class BillItemResourceTest extends BaseResourceTest {
 		BillItemResponseBody entityResponseBody = gson.fromJson(responseBody,
 				BillItemResponseBody.class);
 
-		Assert.assertTrue(entityResponseBody.getBillItemId().equals(billItem.getBillItemId()));
-		Assert.assertTrue(entityResponseBody.getBillId().equals(billItem.getBill().getBillId()));
-		Assert.assertTrue(entityResponseBody.getReferenceId().equals(billItem.getReferenceId()));
-		Assert.assertTrue(entityResponseBody.getQuantity().equals(billItem.getQuantity()));
-		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(billItem.getUnitPrice()));
-		
+		Assert.assertTrue(entityResponseBody.getBillItemId().equals(
+				billItem.getBillItemId()));
+		Assert.assertTrue(entityResponseBody.getBillId().equals(
+				billItem.getBill().getBillId()));
+		Assert.assertTrue(entityResponseBody.getReferenceId().equals(
+				billItem.getReferenceId()));
+		Assert.assertTrue(entityResponseBody.getQuantity().equals(
+				billItem.getQuantity()));
+		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(
+				billItem.getUnitPrice()));
+
 	}
 
 	@Test
@@ -458,10 +461,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 		companyDAO.delete(company);
 
 	}
-	
+
 	@Test
-	public void testGetFullListWithInvalidBillId() throws ClientProtocolException,
-			IOException {
+	public void testGetFullListWithInvalidBillId()
+			throws ClientProtocolException, IOException {
 		HttpGet httpGet = generateBasicHttpGet(BillItemResource.PATH
 				+ BaseResource.SLASH + "?billId=xpto");
 
@@ -470,10 +473,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
-	public void testGetFullListWithNonExistingBillId() throws ClientProtocolException,
-			IOException {
+	public void testGetFullListWithNonExistingBillId()
+			throws ClientProtocolException, IOException {
 		HttpGet httpGet = generateBasicHttpGet(BillItemResource.PATH
 				+ BaseResource.SLASH + "?billId=" + bill.getBillId() + 99);
 
@@ -484,39 +487,46 @@ public class BillItemResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testGetFullListByBillIdCorrectly() throws ClientProtocolException,
-			IOException {
-		
-		//create other bill B
+	public void testGetFullListByBillIdCorrectly()
+			throws ClientProtocolException, IOException {
+
+		// create other bill B
 		Bill billB = createOpenBillAndPersist(consumptionIdentifier);
 		Product productB = createRandomProductAndPersist(company);
-		BillItem billItemB = createRandomProductBillItemAndPersist(billB, productB);
+		BillItem billItemB = createRandomProductBillItemAndPersist(billB,
+				productB);
 		billB.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(billB);
-		
+
 		Product product2 = createRandomProductAndPersist(company);
-		BillItem billItem2 = createRandomProductBillItemAndPersist(bill, product2);
-		
+		BillItem billItem2 = createRandomProductBillItemAndPersist(bill,
+				product2);
+
 		Product product3 = createRandomProductAndPersist(company);
-		BillItem billItem3 = createRandomProductBillItemAndPersist(bill, product3);
-		
+		BillItem billItem3 = createRandomProductBillItemAndPersist(bill,
+				product3);
+
 		Product product4 = createRandomProductAndPersist(company);
-		BillItem billItem4 = createRandomProductBillItemAndPersist(bill, product4);
-		
+		BillItem billItem4 = createRandomProductBillItemAndPersist(bill,
+				product4);
+
 		Product product5 = createRandomProductAndPersist(company);
-		BillItem billItem5 = createRandomProductBillItemAndPersist(bill, product5);
-		
+		BillItem billItem5 = createRandomProductBillItemAndPersist(bill,
+				product5);
+
 		bill.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(bill);
-		
-		//create other bill C
+
+		// create other bill C
 		Bill billC = createOpenBillAndPersist(consumptionIdentifier);
 		Product productC = createRandomProductAndPersist(company);
-		BillItem billItemC = createRandomProductBillItemAndPersist(billC, productC);
+		BillItem billItemC = createRandomProductBillItemAndPersist(billC,
+				productC);
 		billC.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(billC);
 
-		HttpGet httpGet = generateBasicHttpGet(BillItemResource.PATH + "?billId=" + bill.getBillId());
+		HttpGet httpGet = generateBasicHttpGet(BillItemResource.PATH
+				+ "?billId=" + bill.getBillId());
 
 		HttpResponse response = getHttpClient().execute(httpGet);
 
@@ -525,8 +535,9 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
-		Type listType = new TypeToken<List<BillItemResponseBody>>() {}.getType();
-		
+		Type listType = new TypeToken<List<BillItemResponseBody>>() {
+		}.getType();
+
 		List<BillItemResponseBody> entityResponseBodyList = gson.fromJson(
 				responseBody, listType);
 
@@ -540,34 +551,34 @@ public class BillItemResourceTest extends BaseResourceTest {
 				billItem4);
 		BillItemResponseBody entityResponseBody4 = new BillItemResponseBody(
 				billItem5);
-		
+
 		Assert.assertEquals(entityResponseBodyList.size(), 5);
-		
+
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody1));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody2));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody3));
 		Assert.assertTrue(entityResponseBodyList.contains(entityResponseBody4));
-		
+
 		billItemDAO.delete(billItemB);
 		productDAO.delete(productB);
 		billDAO.delete(billB);
-		
+
 		billItemDAO.delete(billItem2);
 		billItemDAO.delete(billItem3);
 		billItemDAO.delete(billItem4);
 		billItemDAO.delete(billItem5);
-		
+
 		billItemDAO.delete(billItemC);
 		productDAO.delete(productC);
 		billDAO.delete(billC);
-		
+
 		productDAO.delete(product2);
 		productDAO.delete(product3);
 		productDAO.delete(product4);
 		productDAO.delete(product5);
 	}
-	
+
 	@Test
 	public void testPutInvalidEntity() throws ClientProtocolException,
 			IOException {
@@ -612,7 +623,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
 	public void testPutMissingProductId() throws ClientProtocolException,
 			IOException {
@@ -633,7 +644,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
 	public void testPutMissingQuantity() throws ClientProtocolException,
 			IOException {
@@ -654,10 +665,10 @@ public class BillItemResourceTest extends BaseResourceTest {
 		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
 				.getStatusLine().getStatusCode());
 	}
-	
+
 	@Test
-	public void testPutMoveBillItemToAClosedBill() throws ClientProtocolException,
-			IOException {
+	public void testPutMoveBillItemToAClosedBill()
+			throws ClientProtocolException, IOException {
 		ConsumptionIdentifier consumptionIdentifier2 = createRandomConsumptionIdentifierAndPersist(company);
 		Bill bill2 = createOpenBillAndPersist(consumptionIdentifier2);
 		bill2.setStatus(BillResource.Status.CLOSED.toString());
@@ -678,19 +689,19 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		Assert.assertEquals(Status.CONFLICT.getStatusCode(), response
 				.getStatusLine().getStatusCode());
-		
+
 		billDAO.delete(bill2);
 		consumptionIdentifierDAO.delete(consumptionIdentifier2);
 	}
-	
+
 	@Test
-	public void testPutMoveBillItemToOtherCompanysBill() throws ClientProtocolException,
-			IOException {
-		
+	public void testPutMoveBillItemToOtherCompanysBill()
+			throws ClientProtocolException, IOException {
+
 		Company company = createCompanyAndPersist();
 		ConsumptionIdentifier consumptionIdentifier = createRandomConsumptionIdentifierAndPersist(company);
 		Bill bill = createOpenBillAndPersist(consumptionIdentifier);
-		
+
 		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
 				+ BaseResource.SLASH + billItem.getBillItemId());
 
@@ -706,16 +717,42 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response
 				.getStatusLine().getStatusCode());
-		
+
 		billDAO.delete(bill);
 		consumptionIdentifierDAO.delete(consumptionIdentifier);
 		companyDAO.delete(company);
 	}
 
 	@Test
-	public void testPutCorrectEntity() throws ClientProtocolException,
+	public void testPutTaxBillItem() throws ClientProtocolException,
 			IOException {
 		
+		billItem.setType(BillItem.Type.TAX.toString());
+		billItemDAO.update(billItem);
+
+		// Alter entity
+
+		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
+				+ BaseResource.SLASH + billItem.getBillItemId());
+
+		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setReferenceId(product.getProductId());
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPut.setEntity(new StringEntity(requestBody));
+
+		HttpResponse response = getHttpClient().execute(httpPut);
+
+		Assert.assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatusLine()
+				.getStatusCode());
+	}
+
+	@Test
+	public void testPutCorrectEntity() throws ClientProtocolException,
+			IOException {
+
 		Product product = createRandomProductAndPersist(company);
 
 		// Alter entity
@@ -724,7 +761,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 				+ BaseResource.SLASH + billItem.getBillItemId());
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
-		
+
 		entityRequestBody.setReferenceId(product.getProductId());
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
@@ -735,9 +772,9 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		Assert.assertEquals(Status.OK.getStatusCode(), response.getStatusLine()
 				.getStatusCode());
-		
+
 		// Consume response body to release connection for next request
-				StringUtilities.httpResponseAsString(response);
+		StringUtilities.httpResponseAsString(response);
 
 		// Retrieve entity for comparison
 
@@ -753,33 +790,38 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		BillItemResponseBody entityResponseBody = gson.fromJson(responseBody,
 				BillItemResponseBody.class);
-		
-		Assert.assertTrue(entityResponseBody.getBillItemId().equals(billItem.getBillItemId()));
-		Assert.assertTrue(entityResponseBody.getBillId().equals(entityRequestBody.getBillId()));
-		Assert.assertTrue(entityResponseBody.getReferenceId().equals(entityRequestBody.getReferenceId()));
-		Assert.assertTrue(entityResponseBody.getQuantity().equals(entityRequestBody.getQuantity()));
-		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(product.getPrice()));
-		
+
+		Assert.assertTrue(entityResponseBody.getBillItemId().equals(
+				billItem.getBillItemId()));
+		Assert.assertTrue(entityResponseBody.getBillId().equals(
+				entityRequestBody.getBillId()));
+		Assert.assertTrue(entityResponseBody.getReferenceId().equals(
+				entityRequestBody.getReferenceId()));
+		Assert.assertTrue(entityResponseBody.getQuantity().equals(
+				entityRequestBody.getQuantity()));
+		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(
+				product.getPrice()));
+
 		billItemDAO.delete(billItem);
 		billItem = null;
-		
+
 		productDAO.delete(product);
-		}
+	}
 
 	@Test
 	public void testPutOtherCompanysEntity() throws ClientProtocolException,
 			IOException {
-		
+
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
 		User user = createUserAndPersist(configuration);
 		LoginToken loginToken = createLoginTokenAndPersist(user);
-		
+
 		authorizedToken = loginToken.getToken();
 
 		HttpPut httpPut = generateBasicHttpPut(BillItemResource.PATH
 				+ BaseResource.SLASH + billItem.getBillItemId());
-		
+
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
@@ -796,7 +838,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		configurationDAO.delete(configuration);
 		companyDAO.delete(company);
 	}
-	
+
 	@Test
 	public void testDeleteIncorrectEntity() throws ClientProtocolException,
 			IOException {
@@ -831,19 +873,19 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		Assert.assertEquals(Status.NO_CONTENT.getStatusCode(), response
 				.getStatusLine().getStatusCode());
-		
+
 		billItem = null;
 	}
 
 	@Test
 	public void testDeleteOtherCompanysEntity() throws ClientProtocolException,
 			IOException {
-		
+
 		Company company = createCompanyAndPersist();
 		Configuration configuration = createConfigurationAndPersist(company);
 		User user = createUserAndPersist(configuration);
 		LoginToken loginToken = createLoginTokenAndPersist(user);
-		
+
 		authorizedToken = loginToken.getToken();
 
 		HttpDelete httpDelete = generateBasicHttpDelete(BillItemResource.PATH
@@ -859,15 +901,16 @@ public class BillItemResourceTest extends BaseResourceTest {
 		configurationDAO.delete(configuration);
 		companyDAO.delete(company);
 	}
-	
+
 	// Utilitary functions
 	private BillItemRequestBody generateBasicEntityRequestBody() {
 		BillItemRequestBody entityRequestBody = new BillItemRequestBody();
 
 		entityRequestBody.setBillId(bill.getBillId());
 		entityRequestBody.setReferenceId(product.getProductId());
-		entityRequestBody.setQuantity(RandomGenerator.randomPositiveDouble(100));
-			
+		entityRequestBody
+				.setQuantity(RandomGenerator.randomPositiveDouble(100));
+
 		return entityRequestBody;
 	}
 

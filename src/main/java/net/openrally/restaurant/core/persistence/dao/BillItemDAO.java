@@ -38,5 +38,17 @@ public class BillItemDAO extends AbstractHibernateDAO<BillItem, Long> {
 		query.setParameter("billId", billId);
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<BillItem> getAllByReferenceIdAndType(Long referenceId, String string) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session
+				.createQuery("from "
+						+ domainClass.getSimpleName()
+						+ " where referenceId = :referenceId AND type = :type");
+		query.setParameter("referenceId", referenceId);
+		query.setParameter("type", string);
+		return query.list();
+	}
 
 }

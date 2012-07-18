@@ -19,6 +19,7 @@ public class BillItemResponseBody {
 		this.referenceId = billItem.getReferenceId();
 		this.quantity = billItem.getQuantity();
 		this.unitPrice = billItem.getUnitPrice();
+		this.type = billItem.getType();
 	}
 	public Long getBillItemId() {
 		return billItemId;

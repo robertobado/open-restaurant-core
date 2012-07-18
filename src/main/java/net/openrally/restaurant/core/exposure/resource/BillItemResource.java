@@ -219,6 +219,10 @@ public class BillItemResource extends BaseResource {
 				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
+		
+		if(StringUtils.equals(billItem.getType(), BillItem.Type.TAX.toString())){
+			throw new ForbiddenException("Cannot edit tax items");
+		}
 
 		BillItemRequestBody entityRequestBody = retrieveEntityRequestBody(requestBody);
 		
@@ -392,7 +396,7 @@ public class BillItemResource extends BaseResource {
 				continue;
 			}
 			
-			taxItem.setUnitPrice(tax.getAmount() * totalProductsValue);
+			taxItem.setUnitPrice(tax.getAmount()/100 * totalProductsValue);
 			billItemDAO.update(taxItem);
 		}
 	}
