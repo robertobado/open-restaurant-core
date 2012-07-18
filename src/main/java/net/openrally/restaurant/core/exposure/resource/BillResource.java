@@ -24,9 +24,13 @@ import net.openrally.restaurant.core.exception.ForbiddenException;
 import net.openrally.restaurant.core.exception.NotFoundException;
 import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.BillDAO;
+import net.openrally.restaurant.core.persistence.dao.BillItemDAO;
 import net.openrally.restaurant.core.persistence.dao.ConsumptionIdentifierDAO;
+import net.openrally.restaurant.core.persistence.dao.TaxDAO;
 import net.openrally.restaurant.core.persistence.entity.Bill;
+import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.ConsumptionIdentifier;
+import net.openrally.restaurant.core.persistence.entity.Tax;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.BillRequestBody;
 import net.openrally.restaurant.response.body.BillResponseBody;
@@ -68,6 +72,12 @@ public class BillResource extends BaseResource {
 
 	@Autowired
 	private BillDAO billDAO;
+	
+	@Autowired
+	private BillItemDAO billItemDAO;
+	
+	@Autowired
+	private TaxDAO taxDAO;
 
 	@Autowired
 	private ConsumptionIdentifierDAO consumptionIdentifierDAO;
@@ -133,6 +143,7 @@ public class BillResource extends BaseResource {
 
 		try {
 			billDAO.save(bill);
+			addTaxItems(bill);
 			billDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
@@ -272,6 +283,7 @@ public class BillResource extends BaseResource {
 		}
 
 		try {
+			deleteTaxItems(bill);
 			billDAO.delete(bill);
 			billDAO.flush();
 		} catch (ConstraintViolationException e) {
@@ -434,6 +446,37 @@ public class BillResource extends BaseResource {
 		if (!found) {
 			logger.debug("Invalid status parameter");
 			throw new BadRequestException("Invalid status parameter value");
+		}
+	}
+	
+	private void addTaxItems(Bill bill){
+		List<Tax> taxList = taxDAO.getAllByCompanyId(bill.getConsumptionIdentifier().getCompany().getCompanyId());
+		
+		for(Tax tax : taxList){
+			BillItem billItem = new BillItem();
+			billItem.setBill(bill);
+			billItem.setQuantity(1.0);
+			billItem.setReferenceId(tax.getTaxId());
+			billItem.setType(BillItem.Type.TAX.toString());
+			if(tax.getPercentage()){
+				billItem.setUnitPrice(0.0);
+			}
+			else{
+				billItem.setUnitPrice(tax.getAmount());
+			}
+			
+			billItemDAO.save(billItem);
+		}
+	}
+	
+	private void deleteTaxItems(Bill bill){
+		List<BillItem> billItems = billItemDAO.getAllByCompanyIdAndBillId(bill.getConsumptionIdentifier().getCompany().getCompanyId(), bill.getBillId());
+		
+		for(BillItem billItem : billItems){
+			if(!StringUtils.equals(billItem.getType(), BillItem.Type.TAX.toString())){
+				continue;
+			}
+			billItemDAO.delete(billItem);
 		}
 	}
 

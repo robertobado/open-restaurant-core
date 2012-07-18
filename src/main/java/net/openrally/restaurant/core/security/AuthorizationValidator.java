@@ -47,7 +47,7 @@ public class AuthorizationValidator {
 		}
 		
 		// Login and company are the only resource accessible without a login token
-		if (!path.equals("login") && !path.equals("company")) {
+		if (!path.equals("login") && !path.equals("company") && !path.equals("heartbeat")) {
 
 			if (null == loginTokenString
 					|| StringUtils.isBlank(loginTokenString)) {

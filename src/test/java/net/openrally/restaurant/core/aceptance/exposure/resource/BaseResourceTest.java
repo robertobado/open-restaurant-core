@@ -594,12 +594,13 @@ public class BaseResourceTest {
 		return bill;
 	}	
 	
-	protected BillItem createRandomBillItemAndPersist(Bill bill, Product product){
+	protected BillItem createRandomProductBillItemAndPersist(Bill bill, Product product){
 		BillItem billItem = new BillItem();
 		billItem.setBill(bill);
-		billItem.setProduct(product);
+		billItem.setReferenceId(product.getProductId());
 		billItem.setQuantity(RandomGenerator.randomPositiveDouble(100));
 		billItem.setUnitPrice(product.getPrice());
+		billItem.setType(BillItem.Type.PRODUCT.toString());
 		billItemDAO.save(billItem);
 		return billItem;
 	}	

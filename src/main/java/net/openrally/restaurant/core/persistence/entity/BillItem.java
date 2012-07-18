@@ -14,6 +14,21 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "bill_item")
 public class BillItem implements Serializable{
+	
+	public enum Type {
+	    PRODUCT("Product"),
+	    TAX("Tax");
+	    
+	    private String type;
+	    
+	    Type(String type){
+	    	this.type = type;
+	    }
+	    
+	    public String toString(){
+	    	return type;
+	    }
+	}
 
 	private static final long serialVersionUID = 1601860130482671796L;
 
@@ -26,9 +41,11 @@ public class BillItem implements Serializable{
 	@JoinColumn(name = "billId", referencedColumnName = "billId", nullable=false)
 	private Bill bill;
 	
-	@ManyToOne(optional=false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "productId", referencedColumnName = "productId", nullable=false)
-	private Product product;
+	@Column(nullable=false)
+	private String type;
+	
+	@Column(nullable=false)
+	private Long referenceId;
 	
 	@Column(nullable=false)
 	private Double quantity;
@@ -51,13 +68,21 @@ public class BillItem implements Serializable{
 	public void setBill(Bill bill) {
 		this.bill = bill;
 	}
-
-	public Product getProduct() {
-		return product;
+	
+	public String getType() {
+		return type;
 	}
 
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Long getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(Long referenceId) {
+		this.referenceId = referenceId;
 	}
 
 	public Double getQuantity() {

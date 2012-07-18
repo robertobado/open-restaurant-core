@@ -12,7 +12,7 @@ public class BillItemRequestBody extends BaseRequestBody{
 	
 	@ParameterRequired
 	@ParameterValuePositive
-	private Long productId;
+	private Long referenceId;
 	
 	@ParameterRequired
 	@ParameterValuePositive
@@ -26,12 +26,12 @@ public class BillItemRequestBody extends BaseRequestBody{
 		this.billId = billId;
 	}
 
-	public Long getProductId() {
-		return productId;
+	public Long getReferenceId() {
+		return referenceId;
 	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
+	public void setReferenceId(Long referenceId) {
+		this.referenceId = referenceId;
 	}
 
 	public Double getQuantity() {

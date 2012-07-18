@@ -2,6 +2,7 @@ package net.openrally.restaurant.core.aceptance.exposure.resource;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -19,6 +20,7 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Product;
 import net.openrally.restaurant.core.persistence.entity.Role;
+import net.openrally.restaurant.core.persistence.entity.Tax;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
@@ -75,7 +77,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		consumptionIdentifier = createRandomConsumptionIdentifierAndPersist(company);
 		bill = createOpenBillAndPersist(consumptionIdentifier);
 		product = createRandomProductAndPersist(company);
-		billItem = createRandomBillItemAndPersist(bill, product);
+		billItem = createRandomProductBillItemAndPersist(bill, product);
 	}
 	
 	@After
@@ -197,13 +199,13 @@ public class BillItemResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testPostMissingProductId()
+	public void testPostMissingReferenceId()
 			throws ClientProtocolException, IOException {
 		HttpPost httpPost = generateBasicHttpPost(BillItemResource.PATH);
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
-		entityRequestBody.setProductId(null);
+		entityRequestBody.setReferenceId(null);
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
@@ -425,7 +427,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		Assert.assertTrue(entityResponseBody.getBillItemId().equals(billItem.getBillItemId()));
 		Assert.assertTrue(entityResponseBody.getBillId().equals(billItem.getBill().getBillId()));
-		Assert.assertTrue(entityResponseBody.getProductId().equals(billItem.getProduct().getProductId()));
+		Assert.assertTrue(entityResponseBody.getReferenceId().equals(billItem.getReferenceId()));
 		Assert.assertTrue(entityResponseBody.getQuantity().equals(billItem.getQuantity()));
 		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(billItem.getUnitPrice()));
 		
@@ -488,21 +490,21 @@ public class BillItemResourceTest extends BaseResourceTest {
 		//create other bill B
 		Bill billB = createOpenBillAndPersist(consumptionIdentifier);
 		Product productB = createRandomProductAndPersist(company);
-		BillItem billItemB = createRandomBillItemAndPersist(billB, productB);
+		BillItem billItemB = createRandomProductBillItemAndPersist(billB, productB);
 		billB.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(billB);
 		
 		Product product2 = createRandomProductAndPersist(company);
-		BillItem billItem2 = createRandomBillItemAndPersist(bill, product2);
+		BillItem billItem2 = createRandomProductBillItemAndPersist(bill, product2);
 		
 		Product product3 = createRandomProductAndPersist(company);
-		BillItem billItem3 = createRandomBillItemAndPersist(bill, product3);
+		BillItem billItem3 = createRandomProductBillItemAndPersist(bill, product3);
 		
 		Product product4 = createRandomProductAndPersist(company);
-		BillItem billItem4 = createRandomBillItemAndPersist(bill, product4);
+		BillItem billItem4 = createRandomProductBillItemAndPersist(bill, product4);
 		
 		Product product5 = createRandomProductAndPersist(company);
-		BillItem billItem5 = createRandomBillItemAndPersist(bill, product5);
+		BillItem billItem5 = createRandomProductBillItemAndPersist(bill, product5);
 		
 		bill.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(bill);
@@ -510,7 +512,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		//create other bill C
 		Bill billC = createOpenBillAndPersist(consumptionIdentifier);
 		Product productC = createRandomProductAndPersist(company);
-		BillItem billItemC = createRandomBillItemAndPersist(billC, productC);
+		BillItem billItemC = createRandomProductBillItemAndPersist(billC, productC);
 		billC.setStatus(BillResource.Status.CLOSED.toString());
 		billDAO.update(billC);
 
@@ -620,7 +622,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
 
-		entityRequestBody.setProductId(null);
+		entityRequestBody.setReferenceId(null);
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
@@ -723,7 +725,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 
 		BillItemRequestBody entityRequestBody = generateBasicEntityRequestBody();
 		
-		entityRequestBody.setProductId(product.getProductId());
+		entityRequestBody.setReferenceId(product.getProductId());
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
@@ -754,7 +756,7 @@ public class BillItemResourceTest extends BaseResourceTest {
 		
 		Assert.assertTrue(entityResponseBody.getBillItemId().equals(billItem.getBillItemId()));
 		Assert.assertTrue(entityResponseBody.getBillId().equals(entityRequestBody.getBillId()));
-		Assert.assertTrue(entityResponseBody.getProductId().equals(entityRequestBody.getProductId()));
+		Assert.assertTrue(entityResponseBody.getReferenceId().equals(entityRequestBody.getReferenceId()));
 		Assert.assertTrue(entityResponseBody.getQuantity().equals(entityRequestBody.getQuantity()));
 		Assert.assertTrue(entityResponseBody.getUnitPrice().equals(product.getPrice()));
 		
@@ -859,14 +861,14 @@ public class BillItemResourceTest extends BaseResourceTest {
 	}
 	
 	// Utilitary functions
-		private BillItemRequestBody generateBasicEntityRequestBody() {
-			BillItemRequestBody entityRequestBody = new BillItemRequestBody();
+	private BillItemRequestBody generateBasicEntityRequestBody() {
+		BillItemRequestBody entityRequestBody = new BillItemRequestBody();
 
-			entityRequestBody.setBillId(bill.getBillId());
-			entityRequestBody.setProductId(product.getProductId());
-			entityRequestBody.setQuantity(RandomGenerator.randomPositiveDouble(100));
+		entityRequestBody.setBillId(bill.getBillId());
+		entityRequestBody.setReferenceId(product.getProductId());
+		entityRequestBody.setQuantity(RandomGenerator.randomPositiveDouble(100));
 			
-			return entityRequestBody;
-		}
+		return entityRequestBody;
+	}
 
 }

@@ -26,9 +26,11 @@ import net.openrally.restaurant.core.exception.UnauthorizedException;
 import net.openrally.restaurant.core.persistence.dao.BillDAO;
 import net.openrally.restaurant.core.persistence.dao.BillItemDAO;
 import net.openrally.restaurant.core.persistence.dao.ProductDAO;
+import net.openrally.restaurant.core.persistence.dao.TaxDAO;
 import net.openrally.restaurant.core.persistence.entity.Bill;
 import net.openrally.restaurant.core.persistence.entity.BillItem;
 import net.openrally.restaurant.core.persistence.entity.Product;
+import net.openrally.restaurant.core.persistence.entity.Tax;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.request.body.BillItemRequestBody;
 import net.openrally.restaurant.response.body.BillItemResponseBody;
@@ -62,6 +64,9 @@ public class BillItemResource extends BaseResource {
 	@Autowired
 	private ProductDAO productDAO;
 	
+	@Autowired
+	private TaxDAO taxDAO;
+	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -69,7 +74,7 @@ public class BillItemResource extends BaseResource {
 	public Response post(String requestBody,
 			@HeaderParam(ContainerRequest.AUTHORIZATION) String loginToken)
 			throws BadRequestException, ForbiddenException, URISyntaxException,
-			UnauthorizedException, ConflictException {
+			UnauthorizedException, ConflictException, NotFoundException {
 
 		User user = getRequestUser(loginToken);
 
@@ -78,7 +83,7 @@ public class BillItemResource extends BaseResource {
 		Bill bill = billDAO
 				.get(entityRequestBody.getBillId());
 
-		if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
+		if (!user.getCompany().getCompanyId().equals(bill.getConsumptionIdentifier().getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
 		
@@ -87,18 +92,22 @@ public class BillItemResource extends BaseResource {
 		}
 		
 		Product product = productDAO
-				.get(entityRequestBody.getProductId());
-
-		if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
+				.get(entityRequestBody.getReferenceId());
+		
+		if(null == product){
+			throw new NotFoundException("Referenced product not found");
+		}
+		
+		if (!user.getCompany().getCompanyId().equals(product.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
-
-		logger.debug("Creating new bill item");
-
-		BillItem billItem = new BillItem();
 		
+		logger.debug("Creating new bill item");
+		
+		BillItem billItem = new BillItem();
 		billItem.setBill(bill);
-		billItem.setProduct(product);
+		billItem.setType(BillItem.Type.PRODUCT.toString());
+		billItem.setReferenceId(entityRequestBody.getReferenceId());
 		billItem.setQuantity(entityRequestBody.getQuantity());
 		billItem.setUnitPrice(product.getPrice());
 
@@ -106,6 +115,7 @@ public class BillItemResource extends BaseResource {
 
 		try {
 			billItemDAO.save(billItem);
+			updateTaxItems(bill);
 			billItemDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
@@ -205,41 +215,47 @@ public class BillItemResource extends BaseResource {
 
 		BillItem billItem = retrieveEntity(entityIdString);
 
-		if (!billItem.getBill().getConsumptionIdentifier().getCompany()
-				.getCompanyId().equals(user.getCompany().getCompanyId())) {
+		if (!user.getCompany().getCompanyId().equals(billItem.getBill().getConsumptionIdentifier().getCompany()
+				.getCompanyId())) {
 			throw new ForbiddenException();
 		}
 
 		BillItemRequestBody entityRequestBody = retrieveEntityRequestBody(requestBody);
 		
+		Bill bill = billDAO
+				.get(entityRequestBody.getBillId());
+		
+		if(null == bill){
+			throw new NotFoundException("Bill not found");
+		}
+		
+		if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
+			throw new ForbiddenException();
+		}
+		
+		Bill oldBill = null;
+		
 		if (!billItem.getBill()
 				.getBillId().equals(entityRequestBody
 				.getBillId())) {
-
-			Bill bill = billDAO
-					.get(entityRequestBody.getBillId());
 			
-			if(null == bill){
-				throw new NotFoundException("Bill not found");
-			}
-
-			if (!bill.getConsumptionIdentifier().getCompany().getCompanyId().equals(user.getCompany().getCompanyId())) {
-				throw new ForbiddenException();
-			}
+			oldBill = billItem.getBill();
 			
 			if(!StringUtils.equals(bill.getStatus(),BillResource.Status.OPEN.toString())){
 				throw new ConflictException("Target bill is not open");
 			}
 
-			billItem.setBill(bill);
+			
 		}
 		
-		if (!billItem.getProduct()
-				.getProductId().equals(entityRequestBody
-				.getProductId())) {
+		billItem.setBill(bill);
+		
+		if (!billItem.getReferenceId()
+				.equals(entityRequestBody
+				.getReferenceId())) {
 
 			Product product = productDAO
-					.get(entityRequestBody.getProductId());
+					.get(entityRequestBody.getReferenceId());
 			
 			if(null == product){
 				throw new NotFoundException("Product not found");
@@ -249,10 +265,9 @@ public class BillItemResource extends BaseResource {
 				throw new ForbiddenException();
 			}
 
-			billItem.setProduct(product);
+			billItem.setReferenceId(product.getProductId());
 			billItem.setUnitPrice(product.getPrice());
 		}
-
 		
 		billItem.setQuantity(entityRequestBody.getQuantity());
 		
@@ -260,6 +275,10 @@ public class BillItemResource extends BaseResource {
 
 		try {
 			billItemDAO.update(billItem);
+			updateTaxItems(bill);
+			if(null != oldBill){
+				updateTaxItems(bill);
+			}
 			billDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new BadRequestException(MSG_DUPLICATE_ENTITY);
@@ -294,9 +313,13 @@ public class BillItemResource extends BaseResource {
 				.getCompanyId().equals(user.getCompany().getCompanyId())) {
 			throw new ForbiddenException();
 		}
+		
+		Bill bill = billItem.getBill();
 
 		try {
+			
 			billItemDAO.delete(billItem);
+			updateTaxItems(bill);
 			billItemDAO.flush();
 		} catch (ConstraintViolationException e) {
 			throw new ConflictException(
@@ -347,6 +370,31 @@ public class BillItemResource extends BaseResource {
 		}
 
 		return billItem;
+	}
+	
+	private void updateTaxItems(Bill bill){
+		List<BillItem> billItems = billItemDAO.getAllByCompanyIdAndBillId(bill.getConsumptionIdentifier().getCompany().getCompanyId(), bill.getBillId());
+		List<BillItem> taxItems = new LinkedList<BillItem>();
+		
+		Double totalProductsValue = 0.0;
+		for(BillItem billItem : billItems){
+			if(StringUtils.equals(billItem.getType(), BillItem.Type.PRODUCT.toString())){
+				totalProductsValue += (billItem.getQuantity()*billItem.getUnitPrice());
+			}
+			else if(StringUtils.equals(billItem.getType(), BillItem.Type.TAX.toString())){
+				taxItems.add(billItem);
+			}
+		}
+		
+		for(BillItem taxItem : taxItems){
+			Tax tax = taxDAO.get(taxItem.getReferenceId());
+			if(null == tax || !tax.getPercentage()){
+				continue;
+			}
+			
+			taxItem.setUnitPrice(tax.getAmount() * totalProductsValue);
+			billItemDAO.update(taxItem);
+		}
 	}
 
 }
