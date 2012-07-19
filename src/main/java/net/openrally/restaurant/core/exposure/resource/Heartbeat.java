@@ -16,6 +16,6 @@ public class Heartbeat extends BaseResource {
 	@Transactional(readOnly = true)
 	public Response get(){
 
-		return Response.ok().build();
+		return Response.ok("All checks ok").build();
 	}
 }
