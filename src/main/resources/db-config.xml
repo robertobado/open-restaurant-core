@@ -10,16 +10,16 @@
 		destroy-method="close">
 
 		<property name="driverClassName">
-			<value>${jdbc.driver.className}</value>
+			<value>${restaurant.core.database.driver.className}</value>
 		</property>
 		<property name="url">
-			<value>${jdbc.url}</value>
+			<value>${restaurant.core.database.url}</value>
 		</property>
 		<property name="username">
-			<value>${jdbc.username}</value>
+			<value>${restaurant.core.database.username}</value>
 		</property>
 		<property name="password">
-			<value>${jdbc.password}</value>
+			<value>${restaurant.core.database.password}</value>
 		</property>
 	</bean>
 	<bean id="sessionFactory"
@@ -31,8 +31,8 @@
 			value="net.openrally.restaurant.core.persistence.entity" />
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">${jdbc.hibernate.dialect}</prop>
-				<prop key="hibernate.hbm2ddl.auto">${jdbc.hibernate.ddlmode}</prop>
+				<prop key="hibernate.dialect">${restaurant.core.database.dialect}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${restaurant.core.database.ddlmode}</prop>
 				<!-- uncomment this for first time run -->
 				<prop key="hibernate.show_sql">false</prop>
 			</props>

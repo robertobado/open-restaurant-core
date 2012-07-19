@@ -1,0 +1,6 @@
+restaurant.core.database.driver.className=<your database driver class name>
+restaurant.core.database.url=<your database jdbc full URL>
+restaurant.core.database.username=<your database credential username>
+restaurant.core.database.password=<your database credential password>
+restaurant.core.database.dialect=<you database dialect>
+restaurant.core.database.ddlmode=update
