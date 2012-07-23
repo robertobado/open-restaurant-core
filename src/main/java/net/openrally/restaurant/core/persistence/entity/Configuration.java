@@ -8,8 +8,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "configuration")
@@ -31,6 +34,14 @@ public class Configuration implements Serializable {
 	
 	@Column(nullable = false)
 	private Long loginTokenLifeTime;
+	
+	@Column(nullable = false)
+	private String companyName;
+	
+	@Column(nullable = false)
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	private String billTemplate;
 
 	public Long getLoginTokenLifeTime() {
 		return loginTokenLifeTime;
@@ -54,6 +65,22 @@ public class Configuration implements Serializable {
 
 	public void setCompany(Company company) {
 		this.company = company;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getBillTemplate() {
+		return billTemplate;
+	}
+
+	public void setBillTemplate(String billTemplate) {
+		this.billTemplate = billTemplate;
 	}
 
 	public String getHashSalt() {

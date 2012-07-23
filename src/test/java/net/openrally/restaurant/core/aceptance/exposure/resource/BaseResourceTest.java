@@ -475,6 +475,8 @@ public class BaseResourceTest {
 		configuration.setCompany(company);
 		configuration.setHashSalt(RandomGenerator.generateString());
 		configuration.setLoginTokenLifeTime(100L);
+		configuration.setCompanyName(RandomGenerator.generateString(120));
+		configuration.setBillTemplate(RandomGenerator.generateString(1000));
 
 		configurationDAO.save(configuration);
 

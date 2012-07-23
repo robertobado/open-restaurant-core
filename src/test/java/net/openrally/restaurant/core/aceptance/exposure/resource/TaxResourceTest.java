@@ -737,15 +737,15 @@ public class TaxResourceTest extends BaseResourceTest {
 	}
 	
 	// Utilitary functions
-		private TaxRequestBody generateBasicEntityRequestBody() {
-			TaxRequestBody entityRequestBody = new TaxRequestBody();
+	private TaxRequestBody generateBasicEntityRequestBody() {
+		TaxRequestBody entityRequestBody = new TaxRequestBody();
 
-			entityRequestBody.setName(RandomGenerator.generateString(20));
-			entityRequestBody.setDescription(RandomGenerator.generateString(200));
-			entityRequestBody.setAmount(RandomGenerator.randomDouble(80));
-			entityRequestBody.setPercentage(RandomGenerator.randomBoolean());
-			
-			return entityRequestBody;
-		}
+		entityRequestBody.setName(RandomGenerator.generateString(20));
+		entityRequestBody.setDescription(RandomGenerator.generateString(200));
+		entityRequestBody.setAmount(RandomGenerator.randomDouble(80));
+		entityRequestBody.setPercentage(RandomGenerator.randomBoolean());
+
+		return entityRequestBody;
+	}
 
 }

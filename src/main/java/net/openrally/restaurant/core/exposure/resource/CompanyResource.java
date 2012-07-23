@@ -27,6 +27,7 @@ import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.RandomGenerator;
+import net.openrally.restaurant.core.util.SystemConfiguration;
 import net.openrally.restaurant.response.body.CompanyResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -87,6 +88,8 @@ public class CompanyResource extends BaseResource {
 		configuration.setCompany(company);
 		configuration.setLoginTokenLifeTime(1800L);
 		configuration.setHashSalt(RandomGenerator.generateString(10));
+		configuration.setCompanyName(SystemConfiguration.getPropertyAsString(SystemConfiguration.DEFAULT_COMPANY_NAME));
+		configuration.setBillTemplate(SystemConfiguration.getPropertyAsString(SystemConfiguration.DEFAULT_BILL_TEMPLATE));
 		
 		String username = "administrator";
 		String password = RandomGenerator.generateString(10);

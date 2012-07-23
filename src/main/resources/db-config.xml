@@ -35,6 +35,7 @@
 				<prop key="hibernate.hbm2ddl.auto">${restaurant.core.database.ddlmode}</prop>
 				<!-- uncomment this for first time run -->
 				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
 			</props>
 		</property>
 	</bean>
