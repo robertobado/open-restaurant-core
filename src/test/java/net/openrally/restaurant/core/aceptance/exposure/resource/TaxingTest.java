@@ -117,7 +117,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -192,7 +192,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -267,7 +267,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(billRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -298,7 +298,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		requestBody = getGsonInstance().toJson(billItemRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		response = getHttpClient().execute(httpPost);
 
@@ -380,7 +380,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(billRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -413,7 +413,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		requestBody = getGsonInstance().toJson(billItemRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		response = getHttpClient().execute(httpPost);
 
@@ -507,7 +507,7 @@ public class TaxingTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 

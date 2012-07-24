@@ -170,7 +170,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(roleRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -202,7 +202,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(roleRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -220,7 +220,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(roleRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -383,7 +383,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(roleRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -404,7 +404,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(roleRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -453,7 +453,7 @@ public class RoleResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(roleRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 

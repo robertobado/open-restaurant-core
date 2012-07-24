@@ -168,7 +168,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -187,7 +187,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -205,7 +205,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -235,7 +235,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -276,7 +276,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -484,7 +484,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -504,7 +504,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -525,7 +525,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -577,7 +577,7 @@ public class PermissionResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(permissionRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 

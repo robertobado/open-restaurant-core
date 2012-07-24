@@ -173,7 +173,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -205,7 +205,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -224,7 +224,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -242,7 +242,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -276,7 +276,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -302,7 +302,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -481,7 +481,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -502,7 +502,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -533,7 +533,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -588,7 +588,7 @@ public class UserResourceTest extends BaseResourceTest{
 
 		String requestBody = getGsonInstance().toJson(userRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 

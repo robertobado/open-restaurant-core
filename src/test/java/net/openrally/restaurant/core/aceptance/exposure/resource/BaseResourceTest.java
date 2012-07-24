@@ -62,6 +62,8 @@ import com.sun.jersey.spi.container.ContainerRequest;
 
 @ContextConfiguration("/applicationContext.xml")
 public class BaseResourceTest {
+	
+	protected static final String UTF_8 = "UTF-8";
 
 	protected Gson gson = new Gson();
 

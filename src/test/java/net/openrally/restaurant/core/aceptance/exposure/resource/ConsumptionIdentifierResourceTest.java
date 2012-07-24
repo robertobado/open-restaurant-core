@@ -173,7 +173,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -192,7 +192,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -221,7 +221,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -251,7 +251,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(entityRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -420,7 +420,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -441,7 +441,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -462,7 +462,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 
@@ -511,7 +511,7 @@ public class ConsumptionIdentifierResourceTest extends BaseResourceTest {
 
 		String requestBody = getGsonInstance().toJson(consumptionIdentifierRequestBody);
 
-		httpPut.setEntity(new StringEntity(requestBody));
+		httpPut.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPut);
 

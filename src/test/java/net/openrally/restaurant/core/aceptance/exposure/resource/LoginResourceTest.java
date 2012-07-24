@@ -98,7 +98,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setLogin(null);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -119,7 +119,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setCompanyId(null);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -139,7 +139,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setPassword(null);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -160,7 +160,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setCompanyId(-1L);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -181,7 +181,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setCompanyId(company.getCompanyId() + 10);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -201,7 +201,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setLogin("Invalid Login");
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -222,7 +222,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		loginRequestBody.setPassword("Invalid Password");
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
@@ -242,7 +242,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		LoginRequestBody loginRequestBody = generateBasicLoginRequestBody();
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
-		httpPost.setEntity(new StringEntity(requestBody));
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
 
 		HttpResponse response = getHttpClient().execute(httpPost);
 
