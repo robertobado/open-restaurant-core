@@ -578,6 +578,59 @@ public class BillItemResourceTest extends BaseResourceTest {
 		productDAO.delete(product4);
 		productDAO.delete(product5);
 	}
+	
+	@Test
+	public void testGetOrderedListByBillIdCorrectly()
+			throws ClientProtocolException, IOException {
+		
+		BillItem billItemB = createRandomProductBillItemAndPersist(bill,
+				product);
+		
+		BillItem billItemC = createRandomProductBillItemAndPersist(bill,
+				product);
+		
+		BillItem billItemD = createRandomProductBillItemAndPersist(bill,
+				product);
+		
+		// simulates a deletion
+		billItemDAO.delete(billItemB);
+		
+		// simulates an update
+		billItemC.setQuantity(billItemC.getQuantity() * 2);		
+		billItemDAO.update(billItemC);
+
+		HttpGet httpGet = generateBasicHttpGet(BillItemResource.PATH
+				+ "?billId=" + bill.getBillId());
+
+		HttpResponse response = getHttpClient().execute(httpGet);
+
+		Assert.assertEquals(Status.OK.getStatusCode(), response.getStatusLine()
+				.getStatusCode());
+
+		String responseBody = StringUtilities.httpResponseAsString(response);
+
+		Type listType = new TypeToken<List<BillItemResponseBody>>() {
+		}.getType();
+
+		List<BillItemResponseBody> entityResponseBodyList = gson.fromJson(
+				responseBody, listType);
+
+		BillItemResponseBody entityResponseBody = new BillItemResponseBody(
+				billItem);
+		BillItemResponseBody entityResponseBodyC = new BillItemResponseBody(
+				billItemC);
+		BillItemResponseBody entityResponseBodyD = new BillItemResponseBody(
+				billItemD);
+
+		Assert.assertEquals(entityResponseBodyList.size(), 3);
+		
+		entityResponseBodyList.get(0).equals(entityResponseBody);
+		entityResponseBodyList.get(1).equals(entityResponseBodyC);
+		entityResponseBodyList.get(2).equals(entityResponseBodyD);
+
+		billItemDAO.delete(billItemC);
+		billItemDAO.delete(billItemD);
+	}
 
 	@Test
 	public void testPutInvalidEntity() throws ClientProtocolException,

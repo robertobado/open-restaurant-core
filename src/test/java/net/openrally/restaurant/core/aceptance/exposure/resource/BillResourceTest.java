@@ -17,6 +17,7 @@ import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
+import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
 import net.openrally.restaurant.request.body.BillRequestBody;
 import net.openrally.restaurant.response.body.BillItemResponseBody;
@@ -84,6 +85,7 @@ public class BillResourceTest extends BaseResourceTest {
 		bill1.setStatus(BillResource.Status.OPEN.toString());
 		bill1.setOpenTimestamp(100L);
 		bill1.setConsumptionIdentifier(consumptionIdentifier3);
+		bill1.setPax(1);
 		billDAO.save(bill1);
 		
 		bill2 = new Bill();
@@ -91,6 +93,7 @@ public class BillResourceTest extends BaseResourceTest {
 		bill2.setOpenTimestamp(200L);
 		bill2.setCloseTimestamp(300L);
 		bill2.setConsumptionIdentifier(consumptionIdentifier3);
+		bill2.setPax(2);
 		billDAO.save(bill2);
 
 		consumptionIdentifier4 = createRandomConsumptionIdentifierAndPersist(company);
@@ -100,12 +103,14 @@ public class BillResourceTest extends BaseResourceTest {
 		bill3.setOpenTimestamp(400L);
 		bill3.setCloseTimestamp(500L);
 		bill3.setConsumptionIdentifier(consumptionIdentifier4);
+		bill3.setPax(3);
 		billDAO.save(bill3);
 		
 		bill4 = new Bill();
 		bill4.setStatus(BillResource.Status.OPEN.toString());
 		bill4.setOpenTimestamp(600L);
 		bill4.setConsumptionIdentifier(consumptionIdentifier4);
+		bill4.setPax(4);
 		billDAO.save(bill4);
 		
 	}
@@ -329,6 +334,36 @@ public class BillResourceTest extends BaseResourceTest {
 
 		deleteEntityBasedOnLocation(location, billDAO);
 	}
+	
+	@Test
+	public void testPostMissingPax() throws ClientProtocolException,
+			IOException {
+		HttpPost httpPost = generateBasicHttpPost(BillResource.PATH);
+
+		BillRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		entityRequestBody.setPax(null);
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
+
+		HttpResponse response = getHttpClient().execute(httpPost);
+
+		Assert.assertEquals(Status.CREATED.getStatusCode(), response
+				.getStatusLine().getStatusCode());
+
+		Header locationHeader = response
+				.getLastHeader(BaseResource.LOCATION_HEADER_PARAMETER_NAME);
+
+		Assert.assertNotNull(locationHeader);
+
+		String location = locationHeader.getValue();
+
+		Assert.assertFalse(StringUtils.isBlank(location));
+
+		deleteEntityBasedOnLocation(location, billDAO);
+	}
 
 	@Test
 	public void testPostCorrectEntity() throws ClientProtocolException,
@@ -478,6 +513,8 @@ public class BillResourceTest extends BaseResourceTest {
 				bill.getOpenTimestamp());
 		Assert.assertEquals(entityResponseBody.getConsumptionIdentifierId(),
 				bill.getConsumptionIdentifier().getConsumptionIdentifierId());
+		Assert.assertEquals(entityResponseBody.getPax(),
+				bill.getPax());
 	}
 
 	@Test
@@ -687,7 +724,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testGetListFirstConsumeIdentifier() throws ClientProtocolException,
+	public void testGetListFirstConsumptionIdentifier() throws ClientProtocolException,
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(BillResource.PATH + "?consumptionIdentifierId=" + consumptionIdentifier.getConsumptionIdentifierId());
@@ -726,7 +763,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testGetListSecondConsumeIdentifier() throws ClientProtocolException,
+	public void testGetListSecondConsumptionIdentifier() throws ClientProtocolException,
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(BillResource.PATH + "?consumptionIdentifierId=" + consumptionIdentifier2.getConsumptionIdentifierId());
@@ -765,7 +802,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testGetListThirdConsumeIdentifier() throws ClientProtocolException,
+	public void testGetListThirdConsumptionIdentifier() throws ClientProtocolException,
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(BillResource.PATH + "?consumptionIdentifierId=" + consumptionIdentifier3.getConsumptionIdentifierId());
@@ -804,7 +841,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testGetListFourthConsumeIdentifier() throws ClientProtocolException,
+	public void testGetListFourthConsumptionIdentifier() throws ClientProtocolException,
 			IOException {
 
 		HttpGet httpGet = generateBasicHttpGet(BillResource.PATH + "?consumptionIdentifierId=" + consumptionIdentifier4.getConsumptionIdentifierId());
@@ -1158,7 +1195,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testPutMoveBillToConsumeIdentifierWithAlreadyOpenBill() throws ClientProtocolException,
+	public void testPutMoveBillToConsumptionIdentifierWithAlreadyOpenBill() throws ClientProtocolException,
 			IOException {
 
 		HttpPut httpPut = generateBasicHttpPut(BillResource.PATH
@@ -1179,7 +1216,7 @@ public class BillResourceTest extends BaseResourceTest {
 	}
 	
 	@Test
-	public void testPutMoveBillToOtherCompanysConsumeIdentifier() throws ClientProtocolException,
+	public void testPutMoveBillToOtherCompanysConsumptionIdentifier() throws ClientProtocolException,
 			IOException {
 		
 		Company company = createCompanyAndPersist();
@@ -1355,6 +1392,7 @@ public class BillResourceTest extends BaseResourceTest {
 		entityRequestBody.setOpenTimestamp(System.currentTimeMillis() / 1000);
 		entityRequestBody
 				.setCloseTimestamp(System.currentTimeMillis() / 1000 + 3600);
+		entityRequestBody.setPax(RandomGenerator.randomPositiveInt(15));
 
 		return entityRequestBody;
 	}

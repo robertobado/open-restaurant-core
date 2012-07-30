@@ -25,7 +25,7 @@ public class BillItemDAO extends AbstractHibernateDAO<BillItem, Long> {
 	public List<BillItem> getAllByCompanyIdAndBillId(Long companyId, Long billId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session
-				.createQuery("select bi from "
+				.createQuery("SELECT bi FROM "
 						+ domainClass.getSimpleName()
 						+ " bi, "
 						+ Bill.class.getSimpleName()
@@ -33,7 +33,8 @@ public class BillItemDAO extends AbstractHibernateDAO<BillItem, Long> {
 						+ ConsumptionIdentifier.class.getSimpleName()
 						+" ci, "
 						+ Company.class.getSimpleName()
-						+" c where c.companyId = :companyId AND ci.company = c AND b.consumptionIdentifier = ci AND b.billId = :billId AND bi.bill = b");
+						+" c where c.companyId = :companyId AND ci.company = c AND b.consumptionIdentifier = ci AND b.billId = :billId AND bi.bill = b"
+						+" ORDER BY bi.billItemId ASC");
 		query.setParameter("companyId", companyId);
 		query.setParameter("billId", billId);
 		return query.list();

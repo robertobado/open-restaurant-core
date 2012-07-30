@@ -129,6 +129,7 @@ public class BillResource extends BaseResource {
 		bill.setConsumptionIdentifier(consumptionIdentifier);
 		bill.setOpenTimestamp(entityRequestBody.getOpenTimestamp());
 		bill.setCloseTimestamp(entityRequestBody.getCloseTimestamp());
+		bill.setPax(entityRequestBody.getPax());
 
 		if (null == bill.getOpenTimestamp()) {
 			bill.setOpenTimestamp(System.currentTimeMillis() / 1000);
@@ -353,6 +354,7 @@ public class BillResource extends BaseResource {
 			bill.setConsumptionIdentifier(consumptionIdentifier);
 		}
 
+		bill.setPax(entityRequestBody.getPax());
 		bill.setStatus(entityRequestBody.getStatus());
 		
 		if(null != entityRequestBody.getOpenTimestamp()){

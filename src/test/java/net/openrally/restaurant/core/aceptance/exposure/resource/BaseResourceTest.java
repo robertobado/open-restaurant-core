@@ -594,6 +594,7 @@ public class BaseResourceTest {
 		bill.setStatus(BillResource.Status.OPEN.toString());
 		bill.setOpenTimestamp(System.currentTimeMillis()/1000);
 		bill.setConsumptionIdentifier(consumptionIdentifier);
+		bill.setPax(RandomGenerator.randomPositiveInt(15));
 		billDAO.save(bill);
 		return bill;
 	}	

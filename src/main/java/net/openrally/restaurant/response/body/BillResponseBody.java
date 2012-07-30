@@ -11,6 +11,7 @@ public class BillResponseBody {
 	private String status;
 	private Long openTimestamp;
 	private Long closeTimestamp;
+	private Integer pax;
 	
 	public BillResponseBody(Bill bill) {
 		this.billId = bill.getBillId();
@@ -18,6 +19,7 @@ public class BillResponseBody {
 		this.status = bill.getStatus();
 		this.openTimestamp = bill.getOpenTimestamp();
 		this.closeTimestamp = bill.getCloseTimestamp();
+		this.pax = bill.getPax();
 	}
 	public Long getBillId() {
 		return billId;
@@ -83,7 +85,23 @@ public class BillResponseBody {
 	    if(null == otherEntityResponseBody.getConsumptionIdentifierId() || !otherEntityResponseBody.getConsumptionIdentifierId().equals(this.getConsumptionIdentifierId())){
 	    	return false;
 	    }
+	    if (otherEntityResponseBody.getPax() == null && this.getPax() != null){
+	    	return false;
+	    }
+	    if (this.getPax() == null && otherEntityResponseBody.getPax() != null){
+	    	return false;
+	    }
+	    if(!this.getPax().equals(otherEntityResponseBody.getPax())){
+	    	return false;
+	    }
+	    
 	    return true;
+	}
+	public Integer getPax() {
+		return pax;
+	}
+	public void setPax(Integer pax) {
+		this.pax = pax;
 	}
 
 }

@@ -34,6 +34,9 @@ public class Bill implements Serializable{
 	
 	@Column
 	private Long closeTimestamp;
+	
+	@Column
+	private Integer pax;
 
 	public Long getBillId() {
 		return billId;
@@ -73,5 +76,13 @@ public class Bill implements Serializable{
 
 	public void setCloseTimestamp(Long closeTimestamp) {
 		this.closeTimestamp = closeTimestamp;
+	}
+
+	public Integer getPax() {
+		return pax;
+	}
+
+	public void setPax(Integer pax) {
+		this.pax = pax;
 	}
 }

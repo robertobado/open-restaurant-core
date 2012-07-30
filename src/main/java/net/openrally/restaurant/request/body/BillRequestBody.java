@@ -16,6 +16,8 @@ public class BillRequestBody extends BaseRequestBody{
 	
 	private Long closeTimestamp;
 	
+	private Integer pax;
+	
 	public Long getConsumptionIdentifierId() {
 		return consumptionIdentifierId;
 	}
@@ -39,6 +41,12 @@ public class BillRequestBody extends BaseRequestBody{
 	}
 	public void setCloseTimestamp(Long closeTimestamp) {
 		this.closeTimestamp = closeTimestamp;
+	}
+	public Integer getPax() {
+		return pax;
+	}
+	public void setPax(Integer pax) {
+		this.pax = pax;
 	}
 	
 }
