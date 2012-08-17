@@ -7,9 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "company")
+@Table(name = "company", uniqueConstraints = {@UniqueConstraint(columnNames={"companyName"})})
 public class Company implements Serializable{
 
 	private static final long serialVersionUID = 8620274543674208772L;
@@ -18,6 +19,9 @@ public class Company implements Serializable{
 	@GeneratedValue
 	@Column(nullable=false)
 	private Long companyId;
+	
+	@Column(nullable=false)
+	private String companyName;
 
 	public Long getCompanyId() {
 		return companyId;
@@ -26,6 +30,13 @@ public class Company implements Serializable{
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
-	
 
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	
 }

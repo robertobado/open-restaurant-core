@@ -28,6 +28,7 @@ import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
 import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.SystemConfiguration;
+import net.openrally.restaurant.request.body.CompanyRequestBody;
 import net.openrally.restaurant.response.body.CompanyResponseBody;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -36,6 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.gson.JsonSyntaxException;
 
 @Path("/company")
 @Component
@@ -65,11 +68,14 @@ public class CompanyResource extends BaseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional(rollbackFor = BadRequestException.class)
-	public Response post()
+	public Response post(String requestBody)
 			throws BadRequestException, ForbiddenException, URISyntaxException,
 			UnauthorizedException, ConflictException {
 		
+		CompanyRequestBody entityRequestBody = retrieveEntityRequestBody(requestBody);
+		
 		Company company = new Company();
+		company.setCompanyName(entityRequestBody.getCompanyName());
 		
 		Role role = new Role();
 		role.setCompany(company);
@@ -125,9 +131,31 @@ public class CompanyResource extends BaseResource {
 		entityResponseBody.setCompanyId(company.getCompanyId());
 		entityResponseBody.setUsername(username);
 		entityResponseBody.setPassword(password);
+		entityResponseBody.setCompanyName(company.getCompanyName());
 
 		return Response.created(locationURI).entity(gson.toJson(entityResponseBody)).build();
 		
 	}
+	
+	private CompanyRequestBody retrieveEntityRequestBody(String requestBodyString)
+			throws BadRequestException {
+		CompanyRequestBody entityRequestBody;
+
+		try {
+			entityRequestBody = gson.fromJson(requestBodyString,
+					CompanyRequestBody.class);
+		} catch (JsonSyntaxException e) {
+			throw new BadRequestException(MSG_INVALID_JSON_AS_REQUEST_BODY);
+		}
+
+		if (null == entityRequestBody) {
+			throw new BadRequestException(MSG_REQUEST_BODY_MISSING_OR_BLANK);
+		}
+
+		entityRequestBody.validate();
+
+		return entityRequestBody;
+	}
+	
 
 }

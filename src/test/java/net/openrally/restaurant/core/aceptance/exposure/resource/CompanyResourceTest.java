@@ -13,7 +13,9 @@ import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.Permission;
 import net.openrally.restaurant.core.persistence.entity.Role;
 import net.openrally.restaurant.core.persistence.entity.User;
+import net.openrally.restaurant.core.util.RandomGenerator;
 import net.openrally.restaurant.core.util.StringUtilities;
+import net.openrally.restaurant.request.body.CompanyRequestBody;
 import net.openrally.restaurant.response.body.CompanyResponseBody;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +23,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,7 +36,7 @@ public class CompanyResourceTest extends BaseResourceTest {
 	public CompanyResourceTest() throws Exception {
 		super();
 	}
-	
+
 	@Test
 	public void testWrongContentTypePost() throws ClientProtocolException,
 			IOException {
@@ -52,6 +55,12 @@ public class CompanyResourceTest extends BaseResourceTest {
 
 		HttpPost httpPost = generateBasicHttpPost(CompanyResource.PATH);
 
+		CompanyRequestBody entityRequestBody = generateBasicEntityRequestBody();
+
+		String requestBody = getGsonInstance().toJson(entityRequestBody);
+		
+		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
+
 		HttpResponse response = getHttpClient().execute(httpPost);
 
 		Assert.assertEquals(Status.CREATED.getStatusCode(), response
@@ -65,7 +74,7 @@ public class CompanyResourceTest extends BaseResourceTest {
 		String location = locationHeader.getValue();
 
 		Assert.assertFalse(StringUtils.isBlank(location));
-		
+
 		String responseBody = StringUtilities.httpResponseAsString(response);
 
 		CompanyResponseBody entityResponseBody = gson.fromJson(responseBody,
@@ -75,28 +84,42 @@ public class CompanyResourceTest extends BaseResourceTest {
 		Assert.assertTrue(entityResponseBody.getCompanyId() > 0);
 		Assert.assertFalse(StringUtils.isBlank(entityResponseBody.getUsername()));
 		Assert.assertFalse(StringUtils.isBlank(entityResponseBody.getPassword()));
+		Assert.assertEquals(entityRequestBody.getCompanyName(), entityResponseBody.getCompanyName());
 		
-		Configuration configuration = configurationDAO.loadByCompanyId(entityResponseBody.getCompanyId());
+		Configuration configuration = configurationDAO
+				.loadByCompanyId(entityResponseBody.getCompanyId());
 		configurationDAO.delete(configuration);
 
-		List<User> userList = userDAO.listAllByCompanyId(entityResponseBody.getCompanyId());
-		for(User user : userList){
+		List<User> userList = userDAO.listAllByCompanyId(entityResponseBody
+				.getCompanyId());
+		for (User user : userList) {
 			userDAO.delete(user);
 		}
-		
-		List<Role> roleList = roleDAO.listAllByCompanyId(entityResponseBody.getCompanyId());
-		for(Role role : roleList){
-			
-			List<Permission> permissionList = permissionDAO.listByRoleId(role.getRoleId());
-			for(Permission permission : permissionList){
+
+		List<Role> roleList = roleDAO.listAllByCompanyId(entityResponseBody
+				.getCompanyId());
+		for (Role role : roleList) {
+
+			List<Permission> permissionList = permissionDAO.listByRoleId(role
+					.getRoleId());
+			for (Permission permission : permissionList) {
 				permissionDAO.delete(permission);
 			}
-			
+
 			roleDAO.delete(role);
 		}
-		
+
 		Company company = companyDAO.get(entityResponseBody.getCompanyId());
 		companyDAO.delete(company);
 
+	}
+
+	// Utilitary functions
+	private CompanyRequestBody generateBasicEntityRequestBody() {
+		CompanyRequestBody entityRequestBody = new CompanyRequestBody();
+
+		entityRequestBody.setCompanyName(RandomGenerator.generateString(20));
+		
+		return entityRequestBody;
 	}
 }

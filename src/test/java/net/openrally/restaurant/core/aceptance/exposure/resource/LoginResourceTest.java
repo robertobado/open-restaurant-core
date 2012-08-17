@@ -109,14 +109,14 @@ public class LoginResourceTest extends BaseResourceTest {
 	}
 
 	@Test
-	public void testEmptyCompanyId() throws ClientProtocolException,
+	public void testEmptyCompanyName() throws ClientProtocolException,
 			IOException {
 		setupEntities();
 		
 		HttpPost httpPost = generateBasicHttpPost(LoginResource.PATH);
 
 		LoginRequestBody loginRequestBody = generateBasicLoginRequestBody();
-		loginRequestBody.setCompanyId(null);
+		loginRequestBody.setCompanyName(null);
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
 		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
@@ -148,27 +148,6 @@ public class LoginResourceTest extends BaseResourceTest {
 		
 		tearDownEntities();
 	}
-
-	@Test
-	public void testInvalidCompany() throws ClientProtocolException,
-			IOException {
-		setupEntities();
-
-		HttpPost httpPost = generateBasicHttpPost(LoginResource.PATH);
-
-		LoginRequestBody loginRequestBody = generateBasicLoginRequestBody();
-		loginRequestBody.setCompanyId(-1L);
-		String requestBody = getGsonInstance().toJson(loginRequestBody);
-
-		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
-
-		HttpResponse response = getHttpClient().execute(httpPost);
-
-		Assert.assertEquals(Status.BAD_REQUEST.getStatusCode(), response
-				.getStatusLine().getStatusCode());
-		
-		tearDownEntities();
-	}
 	
 	@Test
 	public void testNonExistingCompany() throws ClientProtocolException,
@@ -178,7 +157,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		HttpPost httpPost = generateBasicHttpPost(LoginResource.PATH);
 
 		LoginRequestBody loginRequestBody = generateBasicLoginRequestBody();
-		loginRequestBody.setCompanyId(company.getCompanyId() + 10);
+		loginRequestBody.setCompanyName(company.getCompanyName() + "_foo");
 		String requestBody = getGsonInstance().toJson(loginRequestBody);
 
 		httpPost.setEntity(new StringEntity(requestBody, UTF_8));
@@ -265,7 +244,7 @@ public class LoginResourceTest extends BaseResourceTest {
 		
 		LoginRequestBody loginRequestBody = new LoginRequestBody();
 		loginRequestBody.setLogin(user.getLogin());
-		loginRequestBody.setCompanyId(user.getCompany().getCompanyId());
+		loginRequestBody.setCompanyName(user.getCompany().getCompanyName());
 		loginRequestBody.setPassword(randomPassword);
 		
 		return loginRequestBody;

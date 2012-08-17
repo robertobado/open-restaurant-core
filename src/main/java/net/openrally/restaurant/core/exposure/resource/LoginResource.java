@@ -9,8 +9,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import net.openrally.restaurant.core.exception.BadRequestException;
+import net.openrally.restaurant.core.persistence.dao.CompanyDAO;
 import net.openrally.restaurant.core.persistence.dao.ConfigurationDAO;
 import net.openrally.restaurant.core.persistence.dao.UserDAO;
+import net.openrally.restaurant.core.persistence.entity.Company;
 import net.openrally.restaurant.core.persistence.entity.Configuration;
 import net.openrally.restaurant.core.persistence.entity.LoginToken;
 import net.openrally.restaurant.core.persistence.entity.User;
@@ -39,6 +41,9 @@ public class LoginResource extends BaseResource {
 
 	@Autowired
 	private UserDAO userDAO;
+	
+	@Autowired
+	private CompanyDAO companyDAO;
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
@@ -65,10 +70,13 @@ public class LoginResource extends BaseResource {
 		
 		loginRequestBody.validate();
 
-		Long companyId = loginRequestBody.getCompanyId();
+		String companyName = loginRequestBody.getCompanyName();
+		
+		Company company = companyDAO.loadByCompanyName(companyName);
+		
 		String login = loginRequestBody.getLogin();
 
-		User user = userDAO.loadByCompanyIdAndLogin(companyId, login);
+		User user = userDAO.loadByCompanyIdAndLogin(company.getCompanyId(), login);
 
 		if (null == user) {
 			logger.debug("Login denied due to user not found");
@@ -78,7 +86,7 @@ public class LoginResource extends BaseResource {
 		String password = loginRequestBody.getPassword();
 
 		Configuration configuration = configurationDAO
-				.loadByCompanyId(companyId);
+				.loadByCompanyId(company.getCompanyId());
 
 		if (!checkUserPassword(user, password, configuration.getHashSalt())) {
 			logger.debug("Login denied due to password mismatch");

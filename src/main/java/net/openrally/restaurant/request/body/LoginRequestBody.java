@@ -1,7 +1,6 @@
 package net.openrally.restaurant.request.body;
 
 import net.openrally.restaurant.core.annotation.ParameterRequired;
-import net.openrally.restaurant.core.annotation.ParameterValuePositive;
 
 public class LoginRequestBody extends BaseRequestBody{
 	
@@ -12,8 +11,7 @@ public class LoginRequestBody extends BaseRequestBody{
 	private String password;
 	
 	@ParameterRequired
-	@ParameterValuePositive
-	private Long companyId;
+	private String companyName;
 	
 	public String getLogin() {
 		return login;
@@ -27,11 +25,11 @@ public class LoginRequestBody extends BaseRequestBody{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Long getCompanyId() {
-		return companyId;
+	public String getCompanyName() {
+		return companyName;
 	}
-	public void setCompanyId(Long companyId) {
-		this.companyId = companyId;
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 
 }
